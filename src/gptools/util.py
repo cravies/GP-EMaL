@@ -22,8 +22,10 @@ def try_cache(rundata, hashable, index=0):
     rundata.accesses = rundata.accesses + 1
     res = rundata.fitnessCache[index].get(hashable)
     if rundata.accesses % 1000 == 0:
+        """
         print("Caches size: " + str(rundata.stores) + ", Accesses: " + str(rundata.accesses) + " ({:.2f}% hit rate)".format(
             (rundata.accesses - rundata.stores) * 100 / rundata.accesses))
+        """
     return res
 
 
@@ -57,13 +59,14 @@ def init_data(rd):
     parser.add_argument("--neighbours", dest="use_neighbours", action="store_true")
     parser.add_argument("--neighbours-mean", dest="use_neighbours_mean", action="store_true")
     parser.add_argument("--trees", dest="max_trees", type=int)
+    parser.add_argument("-ob", "--obj", help="objective (time or size)", type=str, default="size")
 
     parser.set_defaults(use_ercs=False)
     parser.set_defaults(use_zeros=False)
     parser.set_defaults(use_neighbours=False)
     parser.set_defaults(use_neighbours_mean=False)
     args = parser.parse_args()
-    print(args)
+    print("ARGS: ",args)
     update_experiment_data(rd, args)
     all_data = read_data("{}{}.data".format(args.dir, args.dataset))
     data = all_data["data"]
@@ -72,7 +75,7 @@ def init_data(rd):
     rd.labels = all_data["labels"]
     rd.data = data
     rd.data_t = data.T
-
+    rd.objective = args.obj
 
 def final_output(hof, toolbox, logbook, pop, rundata):
     for res in hof:

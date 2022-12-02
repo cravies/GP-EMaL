@@ -23,6 +23,7 @@ mutpb = 0.15
 mutarpb = 0.15
 num_trees = 34
 gens = 1000
+objective = "size"
 
 num_instances = 0
 num_features = 0

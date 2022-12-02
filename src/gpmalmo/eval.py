@@ -5,7 +5,7 @@ from gpmalmo import rundata
 from gptools.array_wrapper import ArrayWrapper
 from gptools.gp_util import evaluateTrees
 from gptools.util import cachedError
-
+import time
 
 def evalGPMalNC(data_t, toolbox, individual):
     dat_array = evaluateTrees(data_t, toolbox, individual)
@@ -29,6 +29,40 @@ def evalGPMalNC(data_t, toolbox, individual):
         print("wow")
     return to_return
 
+def evalGPMalTime(data_t, toolbox, individual):
+    """
+    Measures error with neigbourhood structure metric, 
+    and median tree runtime
+    """
+    times=[]
+    
+    for i in range(10):
+        #start timer
+        time_st = time.perf_counter()
+        dat_array = evaluateTrees(data_t, toolbox, individual)
+
+        hashable = ArrayWrapper(dat_array)
+        # in [-1,1]
+        # TODO: need to properly consider the situation where there are duplicate ith-nearest neighbours...
+        # At the moment, if we don't do something like this, it likes to find a dumb optima where all distances are ~~0
+        args = (rundata.all_orderings, rundata.identity_ordering, dat_array)
+        cost, ratio_uniques = cachedError(hashable, eval_similarity_st, rundata, args=args, kargs={}, index=0)
+        #stop the timer
+        time_val=float(time.perf_counter() - time_st)
+        times.append(time_val)
+
+    runtime = np.median(times)
+    num_trees = 2*len(individual)
+    if ratio_uniques < 0.9:
+        # lower ratio is worse, so higher return value
+        # 2- so that always worse than a valid soln
+        return 2 - ratio_uniques, runtime
+
+    # reshape to be in [0,2] and then [0,1]
+    to_return = (-cost + 1) / 2, runtime
+    if to_return[0] == 0:
+        print("wow")
+    return to_return
 
 @jit(nopython=True)
 def spearmans(o1, o2):

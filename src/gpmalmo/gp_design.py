@@ -4,16 +4,15 @@ import math
 import numpy as np
 from deap import gp
 from scipy.spatial import distance_matrix
-from sklearn.decomposition import pca
+from sklearn.decomposition import PCA
 
 from gptools.gp_util import np_protectedDiv, np_sigmoid, np_relu, np_if, erc_array
 from gptools.weighted_generators import ProxyArray, RealArray
 
-
 def get_pset_weights(data, num_features, rundata):
     num_var_pca = round(math.sqrt(num_features))
     print("PCA vars: " + str(num_var_pca))
-    dat_pca = pca.PCA(copy=True, n_components=1)
+    dat_pca = PCA(copy=True, n_components=1)
     dat_pca.fit(data)
     print(dat_pca)
     pc = dat_pca.components_[0]
