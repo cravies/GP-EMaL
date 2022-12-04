@@ -1,4 +1,4 @@
-# gptsne
+# GPMaLMO
 Rough usage (from the src/ directory):   
 `python3 -m gpmalmo.gpmal_nc --help`  
 e.g. `python3 -m gpmalmo.gpmal_nc -d COIL20 --dir "datasets/"`
