@@ -1,10 +1,10 @@
 import argparse
 import gzip as gz
 from pathlib import Path
+from deap import gp
 
-from gptools.gp_util import output_ind
+from gptools.gp_util import output_ind, draw_trees
 from gptools.read_data import read_data
-
 
 def update_experiment_data(data, ns):
     dict = vars(ns)
@@ -12,9 +12,7 @@ def update_experiment_data(data, ns):
         setattr(data, i, dict[i])
         # data[i] = dict[i]
 
-
 warnOnce = False
-
 
 def try_cache(rundata, hashable, index=0):
     if index==-1:
@@ -77,9 +75,11 @@ def init_data(rd):
     rd.data_t = data.T
     rd.objective = args.obj
 
-def final_output(hof, toolbox, logbook, pop, rundata):
-    for res in hof:
+def final_output(hof, toolbox, logbook, pop, rundata, pset):
+    for i,res in enumerate(hof):
+        print("feature num: ",i)
         output_ind(res, toolbox, rundata, compress=False)
+        draw_trees(i, res)
     p = Path(rundata.outdir, rundata.logfile + '.gz')
     with gz.open(p, 'wt') as file:
         file.write(str(logbook))

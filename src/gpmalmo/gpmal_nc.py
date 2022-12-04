@@ -62,6 +62,7 @@ if __name__ == "__main__":
     init_data(rundata)
     max_trees = max(2,ceil(.5 * rd.num_features))
     rd.num_trees = max_trees#min(max_trees,20)
+    print("Max number of constructed features: ",max_trees)
     pset, weights = get_pset_weights(rd.data, rd.num_features, rd)
     rd.pset = pset
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,) * rd.nobj)
@@ -104,4 +105,4 @@ if __name__ == "__main__":
 
     pop, stats, hof, logbook = main()
 
-    final_output(hof, toolbox, logbook, pop, rd)
+    final_output(hof, toolbox, logbook, pop, rd, pset)

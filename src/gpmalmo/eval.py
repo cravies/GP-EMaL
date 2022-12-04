@@ -52,7 +52,6 @@ def evalGPMalTime(data_t, toolbox, individual):
         times.append(time_val)
 
     runtime = np.median(times)
-    num_trees = 2*len(individual)
     if ratio_uniques < 0.9:
         # lower ratio is worse, so higher return value
         # 2- so that always worse than a valid soln
