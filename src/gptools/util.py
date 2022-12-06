@@ -2,7 +2,8 @@ import argparse
 import gzip as gz
 from pathlib import Path
 from deap import gp
-
+from matplotlib import pyplot as plt
+from gpmalmo import rundata as rd
 from gptools.gp_util import output_ind, draw_trees
 from gptools.read_data import read_data
 
@@ -86,8 +87,28 @@ def final_output(hof, toolbox, logbook, pop, rundata, pset):
     pop_stats = [str(p.fitness) for p in pop]
     pop_stats.sort()
     hof_stats = [str(h.fitness) for h in hof]
+    #accuracy proxy arr for pareto front
+    accs = [h.fitness.values[0] for h in hof]
+    #second objective arr for pareto front
+    second_obj = [h.fitness.values[1] for h in hof]
+    plot_pareto_front(accs, second_obj)
     # hof_stats.sort()
     print("POP:")
     print("\n".join(pop_stats))
     print("PF:")
     print("\n".join(hof_stats))
+
+def plot_pareto_front(accs, second_obj):
+    """
+    Plot the pareto front tradeoff between 
+    Neighbourhood structure (accuracy proxy)
+    "accs"
+    And second objective metric
+    "second_obj"
+    """
+    plt.plot(accs, second_obj)
+    plt.xlabel("Accuracy proxy loss")
+    plt.ylabel(f"{rd.objective}")
+    plt.title(f"Accuracy loss and {rd.objective} \n pareto front")
+    plt.tight_layout()
+    plt.savefig(f"pareto_front_{rd.objective}.png")

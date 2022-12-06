@@ -27,6 +27,7 @@ def main():
     mstats.register("min", np.min, axis=0)
     mstats.register("median", np.median, axis=0)
     mstats.register("max", np.max, axis=0)
+    # don't want the hof to grow too large...
     hof = ParetoFront()
     print("~"*50)
     print(f"Running for {rd.gens} generations.")

@@ -7,6 +7,7 @@ from pathlib import Path
 from deap import gp
 import pygraphviz as pgv
 from gpmalmo import rundata as rd
+import time
 
 import numpy as np
 import pandas as pd
@@ -149,7 +150,7 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
     """
     old_files = glob.glob(data.outdir + "*.tree" + ('.gz' if compress else ''))
     old_files += glob.glob(data.outdir + "*.csv" + ('.gz' if compress else ''))
-    out = evaluateTrees(data.data_t, toolbox, ind)
+    time_val, out = evaluateTrees(data.data_t, toolbox, ind)
     columns = ['C' + str(i) for i in range(out.shape[1])]
     df = pd.DataFrame(out, columns=columns)
     df["class"] = data.labels
@@ -211,6 +212,9 @@ def evaluateTrees(data_t, toolbox, individual):
 
     result = np.zeros(shape=(num_trees, num_instances))
 
+    #time tree evaluation
+    time_st = time.perf_counter()
+
     for i, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
@@ -221,4 +225,7 @@ def evaluateTrees(data_t, toolbox, individual):
 
         result[i] = comp
     dat_array = result.T
-    return dat_array
+
+    time_val=float(time.perf_counter() - time_st)
+
+    return time_val, dat_array

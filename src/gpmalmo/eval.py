@@ -8,7 +8,7 @@ from gptools.util import cachedError
 import time
 
 def evalGPMalNC(data_t, toolbox, individual):
-    dat_array = evaluateTrees(data_t, toolbox, individual)
+    time_val, dat_array = evaluateTrees(data_t, toolbox, individual)
 
     hashable = ArrayWrapper(dat_array)
     # in [-1,1]
@@ -36,22 +36,24 @@ def evalGPMalTime(data_t, toolbox, individual):
     """
     times=[]
     
-    for i in range(10):
+    #time tree evaluation
+    for i in range(30):
         #start timer
-        time_st = time.perf_counter()
-        dat_array = evaluateTrees(data_t, toolbox, individual)
-
-        hashable = ArrayWrapper(dat_array)
-        # in [-1,1]
-        # TODO: need to properly consider the situation where there are duplicate ith-nearest neighbours...
-        # At the moment, if we don't do something like this, it likes to find a dumb optima where all distances are ~~0
-        args = (rundata.all_orderings, rundata.identity_ordering, dat_array)
-        cost, ratio_uniques = cachedError(hashable, eval_similarity_st, rundata, args=args, kargs={}, index=0)
+        #time_st = time.perf_counter()
+        time_val, dat_array = evaluateTrees(data_t, toolbox, individual)
         #stop the timer
-        time_val=float(time.perf_counter() - time_st)
+        #time_val=float(time.perf_counter() - time_st)
         times.append(time_val)
 
+    hashable = ArrayWrapper(dat_array)
+    # in [-1,1]
+    # TODO: need to properly consider the situation where there are duplicate ith-nearest neighbours...
+    # At the moment, if we don't do something like this, it likes to find a dumb optima where all distances are ~~0
+    args = (rundata.all_orderings, rundata.identity_ordering, dat_array)
+    cost, ratio_uniques = cachedError(hashable, eval_similarity_st, rundata, args=args, kargs={}, index=0)
+
     runtime = np.median(times)
+    print(f"Runtime: {runtime}")
     if ratio_uniques < 0.9:
         # lower ratio is worse, so higher return value
         # 2- so that always worse than a valid soln
