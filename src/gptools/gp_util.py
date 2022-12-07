@@ -97,29 +97,28 @@ def check_uniqueness(ind1, ind2, num_to_produce, offspring):
             dat_set.add(hash2)
             ind2.str = hash2
             offspring.append(ind2)
+"""
+The GPMaLMO algorithm takes a set of n input features
+and constructs a set of m GP trees, where m < n.
+These GP trees take the input features and construct output features
+in the (m dimensional) embedding. 
+Because GPMaLMO optimises two objectives, the possible GP tree solutions
+form a pareto front, which is a set of GP trees with varying scores on the two 
+objectives. If there were only 3 in the pareto front, it would look like this.
+[[good obj 1, bad obj 2], [ok obj 1, ok obj 2], [bad obj 1, good obj 2]]
+You can see this gives us the range of possible outcomes. each entry in the pareto front is 
+pareto optimal in the sense that you can't improve its overall score because to increase 
+its score on one objective would be to decrease it on another.
 
+INPUT:
+Ind is an "individual": a point in the pareto front. (point given by vnum, i.e "version" number)
+For example if we have an input dataset of dimensionality 3 (as in the iris dataset)
+ind will be of length 2 because we want to make two constructed features of the 3 input features.
+Each entry in the pareto front is a candidate for the GP tree that will make that constructed feature.
+We save a picture of each of the constructed feature trees
+"""
 """
 def draw_trees(vnum, ind):
-    """
-    The GPMaLMO algorithm takes a set of n input features
-    and constructs a set of m GP trees, where m < n.
-    These GP trees take the input features and construct output features
-    in the (m dimensional) embedding. 
-    Because GPMaLMO optimises two objectives, the possible GP tree solutions
-    form a pareto front, which is a set of GP trees with varying scores on the two 
-    objectives. If there were only 3 in the pareto front, it would look like this.
-    [[good obj 1, bad obj 2], [ok obj 1, ok obj 2], [bad obj 1, good obj 2]]
-    You can see this gives us the range of possible outcomes. each entry in the pareto front is 
-    pareto optimal in the sense that you can't improve its overall score because to increase 
-    its score on one objective would be to decrease it on another.
-
-    INPUT:
-    Ind is an "individual": a point in the pareto front. (point given by vnum, i.e "version" number)
-    For example if we have an input dataset of dimensionality 3 (as in the iris dataset)
-    ind will be of length 2 because we want to make two constructed features of the 3 input features.
-    Each entry in the pareto front is a candidate for the GP tree that will make that constructed feature.
-    We save a picture of each of the constructed feature trees
-    """
     obj = rd.objective
     print("Objective: ",obj)    
     for fnum,tree in enumerate(ind):
