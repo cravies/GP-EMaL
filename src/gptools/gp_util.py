@@ -5,7 +5,7 @@ import os
 import random
 from pathlib import Path
 from deap import gp
-import pygraphviz as pgv
+#import pygraphviz as pgv
 from gpmalmo import rundata as rd
 import time
 
@@ -98,6 +98,7 @@ def check_uniqueness(ind1, ind2, num_to_produce, offspring):
             ind2.str = hash2
             offspring.append(ind2)
 
+"""
 def draw_trees(vnum, ind):
     """
     The GPMaLMO algorithm takes a set of n input features
@@ -134,6 +135,7 @@ def draw_trees(vnum, ind):
         #feature fnum, version vnum, second objective obj
         #higher vnum will be better at obj2, worse at obj1 and vice versa
         g.draw(f"feat_{fnum}_ver_{vnum}_obj_{obj}.png")
+"""
 
 def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tree_file=None, del_old=False):
     """ Does some stuff
