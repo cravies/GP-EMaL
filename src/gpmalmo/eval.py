@@ -53,7 +53,7 @@ def evalGPMalTime(data_t, toolbox, individual):
     cost, ratio_uniques = cachedError(hashable, eval_similarity_st, rundata, args=args, kargs={}, index=0)
 
     runtime = np.median(times)
-    print(f"Runtime: {runtime}")
+    #print(f"Runtime: {runtime}")
     if ratio_uniques < 0.9:
         # lower ratio is worse, so higher return value
         # 2- so that always worse than a valid soln
