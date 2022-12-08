@@ -34,17 +34,9 @@ def evalGPMalTime(data_t, toolbox, individual):
     Measures error with neigbourhood structure metric, 
     and median tree runtime
     """
-    times=[]
-    
-    #time tree evaluation
-    for i in range(30):
-        #start timer
-        #time_st = time.perf_counter()
-        time_val, dat_array = evaluateTrees(data_t, toolbox, individual)
-        #stop the timer
-        #time_val=float(time.perf_counter() - time_st)
-        times.append(time_val)
-
+    evals=30
+    times=[evaluateTrees(data_t, toolbox, individual)[0] for i in range(evals)]
+    _, dat_array = evaluateTrees(data_t, toolbox, individual)
     hashable = ArrayWrapper(dat_array)
     # in [-1,1]
     # TODO: need to properly consider the situation where there are duplicate ith-nearest neighbours...
