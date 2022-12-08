@@ -8,13 +8,13 @@ from deap import gp
 #import pygraphviz as pgv
 from gpmalmo import rundata as rd
 import time
-
+import sympy
 import numpy as np
 import pandas as pd
 from scipy.special._ufuncs import expit
-
+from sympy import sympify
 from gptools.multitree import str_ind
-
+from gpmalmo import rundata as rd
 
 def protectedDiv(left, right):
     if right == 0:
@@ -97,6 +97,7 @@ def check_uniqueness(ind1, ind2, num_to_produce, offspring):
             dat_set.add(hash2)
             ind2.str = hash2
             offspring.append(ind2)
+
 """
 The GPMaLMO algorithm takes a set of n input features
 and constructs a set of m GP trees, where m < n.
@@ -203,6 +204,34 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
             except OSError as e:  ## if failed, report it back to the user ##
                 print("Error: %s - %s." % (e.filename, e.strerror))
 
+def human_readable(individual):
+    """ convert a candidate function into a human readable string""" 
+    #dictionary to translate deap output to human readable
+    #using sympy
+    locals = {
+        'vsub': lambda x, y : x - y,
+        'vdiv': lambda x, y : x/y if y!=0 else 1,
+        'vmul': lambda x, y : x*y,
+        'vadd': lambda x, y : x + y,
+    }
+    expr = sympy.sympify(str(individual) , locals=locals)
+    return expr
+
+def partial_derivatives(expr):
+    """
+    calculate all the partial derivatives of the sympy 
+    expression for a tree function
+    w.r.t features, i.e 
+    f1, f2,..., fn
+    i.e 
+    g='f1*f2 + f2*f3 + cos(f1)'
+    -> 
+    partials = [f2 - sin(f1),f1 + f3,f2]
+    """
+    #basic tests
+    feats=["f{}".format(i) for i in range(1,rd.num_features)]
+    partials=[sympy.diff(expr,feat) for feat in feats]
+    return partials
 
 def evaluateTrees(data_t, toolbox, individual):
     num_instances = data_t.shape[1]
@@ -219,11 +248,13 @@ def evaluateTrees(data_t, toolbox, individual):
     for i, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
+        func_sympy = human_readable(f)
+        print('Tree function: ', func_sympy)
+        print('Partial derivatives ', partial_derivatives(func_sympy))
         comp = func(*data_t)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
             comp = np.repeat(comp, num_instances)
-
         result[i] = comp
     dat_array = result.T
 
