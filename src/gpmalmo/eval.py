@@ -65,7 +65,7 @@ def evalGPMalTR(data_t, toolbox, individual):
     and input features [f_1,...,f_n]:
     np.la.norm([dg/df1(dataset),...,dg/dfn(dataset)])
     We have multiple GP trees (one for each output)
-    so take the mean of the norm
+    so take the norm of the vector of norms
     """
     TR_term, dat_array = evaluateTreesTR(data_t, toolbox, individual)
 
