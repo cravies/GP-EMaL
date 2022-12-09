@@ -28,11 +28,11 @@ def get_pset_weights(data, num_features, rundata):
     #                  name="vadd")
     pset.addPrimitive(np.subtract, [ProxyArray, ProxyArray], RealArray, name="vsub")
     pset.addPrimitive(np.multiply, [RealArray, RealArray], RealArray, name="vmul")
-    pset.addPrimitive(np_protectedDiv, [RealArray, RealArray], RealArray, name="vdiv")
     """
     Just comment out non sympy differentiable functions because we want to
     take function smoothness measures
     """
+    #pset.addPrimitive(np_protectedDiv, [RealArray, RealArray], RealArray, name="vdiv")
     #pset.addPrimitive(np_sigmoid, [RealArray], RealArray, name="sigmoid")
     #pset.addPrimitive(np_relu, [RealArray], RealArray, name="relu")
     #pset.addPrimitive(np.abs,[np.ndarray],np.ndarray,name="abs")

@@ -7,7 +7,7 @@ from sklearn.metrics import pairwise_distances
 
 import gptools.weighted_generators as wg
 from gpmalmo import rundata as rd
-from gpmalmo.eval import evalGPMalNC, evalGPMalTime
+from gpmalmo.eval import evalGPMalNC, evalGPMalTime, evalGPMalTR
 from gpmalmo.gp_design import get_pset_weights
 from gpmalmo.gpmalnc_moead import GPMALNCMOEAD
 from gptools.ParallelToolbox import ParallelToolbox
@@ -24,6 +24,9 @@ def main():
     elif rd.objective=="time":
         stats_tree_time = tools.Statistics(lambda ind: ind.fitness.values[1])
         mstats = tools.MultiStatistics(cost=stats_cost, tree_runtime=stats_tree_time)
+    elif rd.objective=="tik":
+        stats_tik_norm = tools.Statistics(lambda ind: ind.fitness.values[1])
+        mstats = tools.MultiStatistics(cost=stats_cost, tik_norm=stats_tik_norm)
     mstats.register("min", np.min, axis=0)
     mstats.register("median", np.median, axis=0)
     mstats.register("max", np.max, axis=0)
@@ -83,6 +86,9 @@ if __name__ == "__main__":
     elif rd.objective=="time":
         print("Minimising neighbourhood structure + tree eval time")
         toolbox.register("evaluate", evalGPMalTime, rd.data_t, toolbox)
+    elif rd.objective=="tik":
+        print("Minimising neighbourhood structure + tree tikhonov norm")
+        toolbox.register("evaluate", evalGPMalTR, rd.data_t, toolbox)
     toolbox.register("select", tools.selNSGA2)
     toolbox.register("mate", lim_xmate_aic)
 

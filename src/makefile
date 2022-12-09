@@ -1,9 +1,11 @@
-wine:
+iris:
 	#run it!
-	echo "Running wine dataset, 30 gens, time objective."
-	python3 -m gpmalmo.gpmal_nc -d wine --dir "datasets/" --gens 30 --obj time
-	echo "Running wine dataset, 30 gens, size objective."
-	python3 -m gpmalmo.gpmal_nc -d wine --dir "datasets/" --gens 30 --obj size
+	echo "Running iris dataset, 10 gens, tik objective."
+	python3 -m gpmalmo.gpmal_nc -d iris --dir "datasets/" --gens 10 --obj tik
+	echo "Running iris dataset, 10 gens, time objective."
+	python3 -m gpmalmo.gpmal_nc -d iris --dir "datasets/" --gens 10 --obj time
+	echo "Running iris dataset, 10 gens, size objective."
+	python3 -m gpmalmo.gpmal_nc -d iris --dir "datasets/" --gens 10 --obj size
 clean:
 	#remove old log files
 	for filetype in png csv tree gz; do \

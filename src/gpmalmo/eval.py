@@ -3,7 +3,7 @@ from numba import jit
 
 from gpmalmo import rundata
 from gptools.array_wrapper import ArrayWrapper
-from gptools.gp_util import evaluateTrees
+from gptools.gp_util import evaluateTrees, evaluateTreesTR
 from gptools.util import cachedError
 import time
 
@@ -53,6 +53,38 @@ def evalGPMalTime(data_t, toolbox, individual):
 
     # reshape to be in [0,2] and then [0,1]
     to_return = (-cost + 1) / 2, runtime
+    if to_return[0] == 0:
+        print("wow")
+    return to_return
+
+def evalGPMalTR(data_t, toolbox, individual):
+    """
+    Measures error with neigbourhood structure metric, 
+    and tikhonov regularisation term.
+    Tikhonov regularisation term for a single GP tree with function g
+    and input features [f_1,...,f_n]:
+    np.la.norm([dg/df1(dataset),...,dg/dfn(dataset)])
+    We have multiple GP trees (one for each output)
+    so take the mean of the norm
+    """
+    TR_term, dat_array = evaluateTreesTR(data_t, toolbox, individual)
+
+    #print("TR term: (in eval)", TR_term)
+
+    hashable = ArrayWrapper(dat_array)
+    # in [-1,1]
+    # TODO: need to properly consider the situation where there are duplicate ith-nearest neighbours...
+    # At the moment, if we don't do something like this, it likes to find a dumb optima where all distances are ~~0
+    args = (rundata.all_orderings, rundata.identity_ordering, dat_array)
+    cost, ratio_uniques = cachedError(hashable, eval_similarity_st, rundata, args=args, kargs={}, index=0)
+
+    if ratio_uniques < 0.9:
+        # lower ratio is worse, so higher return value
+        # 2- so that always worse than a valid soln
+        return 2 - ratio_uniques, TR_term
+
+    # reshape to be in [0,2] and then [0,1]
+    to_return = (-cost + 1) / 2, TR_term
     if to_return[0] == 0:
         print("wow")
     return to_return

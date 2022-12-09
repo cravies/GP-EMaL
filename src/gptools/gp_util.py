@@ -10,6 +10,7 @@ from gpmalmo import rundata as rd
 import time
 import sympy
 import numpy as np
+from numpy import linalg as la
 import pandas as pd
 from scipy.special._ufuncs import expit
 from sympy import sympify
@@ -234,6 +235,10 @@ def partial_derivatives(expr):
     return partials
 
 def evaluateTrees(data_t, toolbox, individual):
+    """
+    Evaluate trees,
+    also return time taken
+    """
     num_instances = data_t.shape[1]
     num_trees = len(individual)
 
@@ -248,9 +253,6 @@ def evaluateTrees(data_t, toolbox, individual):
     for i, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
-        func_sympy = human_readable(f)
-        print('Tree function: ', func_sympy)
-        print('Partial derivatives ', partial_derivatives(func_sympy))
         comp = func(*data_t)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
@@ -261,3 +263,56 @@ def evaluateTrees(data_t, toolbox, individual):
     time_val=float(time.perf_counter() - time_st)
 
     return time_val, dat_array
+
+def evaluateTreesTR(data_t, toolbox, individual):
+    """
+    evaluate trees and perform Tikhonov Regularisation, 
+    i.e calculate total norm of partial derivatives
+    of GP trees w.r.t input features. 
+    We will then minimise this term as a secondary objective
+    """
+    num_instances = data_t.shape[1]
+    num_trees = len(individual)
+
+    if not individual.str or len(individual.str) == 0:
+        raise ValueError(individual)
+
+    result = np.zeros(shape=(num_trees, num_instances))
+
+    #partial derivatives L2 norms
+    pd_norms = []
+    badvals=[np.inf,np.nan]
+
+    for i, f in enumerate(individual.str):
+        # Transform the tree expression in a callable function
+        func = toolbox.compile(expr=f)
+        func_sympy = human_readable(f)
+        #print("sympy function: ",func_sympy)
+        #partial derivatives as callable functions
+        pds = partial_derivatives(func_sympy)
+        #print("partial derivatives: ",pds)
+        #compile as executable functions
+        pds = [toolbox.compile(expr=str(pd)) for pd in pds]
+        #call normal tree
+        comp = func(*data_t)
+        #get total norm of all partial derivatives at point of data
+        pd_norm = [la.norm(pd(*data_t)) for pd in pds]
+        """
+        #get rid of inf and nans
+        #not necessary with {+,-,*} function set.
+        print("pd magnitudes: ",pd_mag)
+        try:
+            pd_mag = [[mag for mag in mag_vec if mag not in badvals] for mag_vec in pd_mag]
+        except:
+            pass
+        """
+        pd_norms.append(pd_norm)
+        if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
+            # it decided to just give us a constant back...
+            comp = np.repeat(comp, num_instances)
+        result[i] = comp
+    dat_array = result.T
+    #norm of pd norms
+    TR_term = la.norm(pd_norms)
+
+    return TR_term, dat_array
