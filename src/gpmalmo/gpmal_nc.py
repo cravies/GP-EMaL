@@ -14,6 +14,7 @@ from gptools.ParallelToolbox import ParallelToolbox
 from gptools.gp_util import *
 from gptools.multitree import *
 from gptools.util import init_data, final_output
+import time
 
 def main():
     pop = toolbox.population(n=rd.pop_size)
@@ -63,6 +64,8 @@ def make_ind(toolbox, creator, max_trees):
     return creator.Individual([toolbox.tree() for _ in range(random.randint(1, max_trees))])
 
 if __name__ == "__main__":
+    #time tree evaluation
+    time_st = time.perf_counter()
     init_data(rundata)
     max_trees = max(2,ceil(.5 * rd.num_features))
     rd.num_trees = max_trees#min(max_trees,20)
@@ -113,3 +116,5 @@ if __name__ == "__main__":
     pop, stats, hof, logbook = main()
 
     final_output(hof, toolbox, logbook, pop, rd, pset)
+    time_val=float(time.perf_counter() - time_st)
+    print(f"Program took {time_val:.2f} seconds to run.")

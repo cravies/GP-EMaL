@@ -258,10 +258,9 @@ def evaluateTrees(data_t, toolbox, individual):
             # it decided to just give us a constant back...
             comp = np.repeat(comp, num_instances)
         result[i] = comp
-    dat_array = result.T
-
+    #dont want to time expensive O(n**2) matrix transpose
     time_val=float(time.perf_counter() - time_st)
-
+    dat_array = result.T
     return time_val, dat_array
 
 def evaluateTreesTR(data_t, toolbox, individual):
