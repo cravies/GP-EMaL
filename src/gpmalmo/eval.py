@@ -64,6 +64,7 @@ def evalGPMalTR(data_t, toolbox, individual):
     Tikhonov regularisation term for a single GP tree with function g
     and input features [f_1,...,f_n]:
     np.la.norm([dg/df1(dataset),...,dg/dfn(dataset)])
+    || grad(g)|dataset || 
     We have multiple GP trees (one for each output)
     so take the norm of the vector of norms
     """
