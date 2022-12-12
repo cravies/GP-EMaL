@@ -206,7 +206,7 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
                 print("Error: %s - %s." % (e.filename, e.strerror))
 
 def human_readable(individual):
-    """ convert a candidate function into a human readable string""" 
+    """ convert a candidate function into a human readable sympy expression""" 
     #dictionary to translate deap output to human readable
     #using sympy
     locals = {
@@ -215,24 +215,24 @@ def human_readable(individual):
         'vmul': lambda x, y : x*y,
         'vadd': lambda x, y : x + y,
     }
-    expr = sympy.sympify(str(individual) , locals=locals)
+    expr = sympy.sympify(str(individual), locals=locals)
     return expr
 
-def partial_derivatives(expr):
+def grad_tree(expr):
     """
     calculate all the partial derivatives of the sympy 
     expression for a tree function
-    w.r.t features, i.e 
+    w.r.t features,
     f1, f2,..., fn
-    i.e 
+    i.e calculate the gradient w.r.t the input features
     g='f1*f2 + f2*f3 + cos(f1)'
     -> 
-    partials = [f2 - sin(f1),f1 + f3,f2]
+    grad_tree(g) = [f2 - sin(f1),f1 + f3,f2]
     """
     #basic tests
-    feats=["f{}".format(i) for i in range(1,rd.num_features)]
-    partials=[sympy.diff(expr,feat) for feat in feats]
-    return partials
+    feats=["f{}".format(i) for i in range(1,rd.num_features+1)]
+    grad_tree=[sympy.diff(expr,feat) for feat in feats]
+    return grad_tree
 
 def evaluateTrees(data_t, toolbox, individual):
     """
@@ -289,7 +289,6 @@ def evaluateTreesTR(data_t, toolbox, individual):
 
     #partial derivatives L2 norms
     pd_norms = []
-    badvals=[np.inf,np.nan]
 
     for i, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
@@ -297,7 +296,7 @@ def evaluateTreesTR(data_t, toolbox, individual):
         func_sympy = human_readable(f)
         #print("sympy function: ",func_sympy)
         #partial derivatives as callable functions
-        pds = partial_derivatives(func_sympy)
+        pds = grad_tree(func_sympy)
         #print("partial derivatives: ",pds)
         #compile as executable functions
         pds = [toolbox.compile(expr=str(pd)) for pd in pds]
@@ -305,15 +304,6 @@ def evaluateTreesTR(data_t, toolbox, individual):
         comp = func(*data_t)
         #get total norm of all partial derivatives at point of data
         pd_norm = [la.norm(pd(*data_t)) for pd in pds]
-        """
-        #get rid of inf and nans
-        #not necessary with {+,-,*} function set.
-        print("pd magnitudes: ",pd_mag)
-        try:
-            pd_mag = [[mag for mag in mag_vec if mag not in badvals] for mag_vec in pd_mag]
-        except:
-            pass
-        """
         pd_norms.append(pd_norm)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
