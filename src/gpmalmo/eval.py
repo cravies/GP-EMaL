@@ -34,9 +34,9 @@ def evalGPMalTime(data_t, toolbox, individual):
     Measures error with neigbourhood structure metric, 
     and median tree runtime
     """
-    evals=30
-    times=[evaluateTrees(data_t, toolbox, individual)[0] for i in range(evals)]
-    _, dat_array = evaluateTrees(data_t, toolbox, individual)
+    #evals=30
+    #times=[evaluateTrees(data_t, toolbox, individual)[0] for i in range(evals)]
+    runtime, dat_array = evaluateTrees(data_t, toolbox, individual)
     hashable = ArrayWrapper(dat_array)
     # in [-1,1]
     # TODO: need to properly consider the situation where there are duplicate ith-nearest neighbours...
@@ -44,7 +44,6 @@ def evalGPMalTime(data_t, toolbox, individual):
     args = (rundata.all_orderings, rundata.identity_ordering, dat_array)
     cost, ratio_uniques = cachedError(hashable, eval_similarity_st, rundata, args=args, kargs={}, index=0)
 
-    runtime = np.median(times)
     #print(f"Runtime: {runtime}")
     if ratio_uniques < 0.9:
         # lower ratio is worse, so higher return value

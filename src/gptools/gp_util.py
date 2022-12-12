@@ -247,20 +247,29 @@ def evaluateTrees(data_t, toolbox, individual):
 
     result = np.zeros(shape=(num_trees, num_instances))
 
-    #time tree evaluation
-    time_st = time.perf_counter()
+    # time each tree eval times, take median eval time, 
+    # sum together for total median eval time
+    evals=30
+    times = np.zeros(shape=(num_trees,evals))
 
-    for i, f in enumerate(individual.str):
+    for tree_ind, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
-        comp = func(*data_t)
+        #evaluate eval times, take median eval time
+        for eval_iter in range(evals):
+            #time tree evaluation
+            time_st = time.perf_counter()
+            comp = func(*data_t)
+            times[tree_ind,eval_iter]=float(time.perf_counter() - time_st)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
             comp = np.repeat(comp, num_instances)
-        result[i] = comp
-    #dont want to time expensive O(n**2) matrix transpose
-    time_val=float(time.perf_counter() - time_st)
+        result[tree_ind] = comp
     dat_array = result.T
+    #take the median eval time for each tree
+    times = np.median(times,axis=1)
+    #sum median execution times for all trees
+    time_val = np.sum(times)
     return time_val, dat_array
 
 def evaluateTreesTR(data_t, toolbox, individual):
