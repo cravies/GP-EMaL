@@ -12,4 +12,4 @@ clean:
 		rm *.$$filetype || echo "no ."$$filetype" found" ; \
 	done
 test:
-	python3 -m gptools.test_gp_util
+	python3 -m unittest gptools.test_gp_util
