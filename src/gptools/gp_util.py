@@ -223,14 +223,14 @@ def grad_tree(expr):
     calculate all the partial derivatives of the sympy 
     expression for a tree function
     w.r.t features,
-    f1, f2,..., fn
+    f0, f1,..., fn
     i.e calculate the gradient w.r.t the input features
-    g='f1*f2 + f2*f3 + cos(f1)'
+    g='f0*f1 + f1*f2 + cos(f1)'
     -> 
-    grad_tree(g) = [f2 - sin(f1),f1 + f3,f2]
+    grad_tree(g) = [f1,f0+f2-sin(f1),f1]
     """
     #basic tests
-    feats=["f{}".format(i) for i in range(1,rd.num_features+1)]
+    feats=["f{}".format(i) for i in range(0,rd.num_features)]
     grad_tree=[sympy.diff(expr,feat) for feat in feats]
     return grad_tree
 
@@ -287,17 +287,17 @@ def evaluateTreesTR(data_t, toolbox, individual):
 
     result = np.zeros(shape=(num_trees, num_instances))
 
-    #partial derivatives L2 norms
+    #partial derivative L2 norms
     pd_norms = []
 
     for i, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
         func_sympy = human_readable(f)
-        #print("sympy function: ",func_sympy)
+        print("sympy function: ",func_sympy)
         #partial derivatives as callable functions
         pds = grad_tree(func_sympy)
-        #print("partial derivatives: ",pds)
+        print("partial derivatives: ",pds)
         #compile as executable functions
         pds = [toolbox.compile(expr=str(pd)) for pd in pds]
         #call normal tree

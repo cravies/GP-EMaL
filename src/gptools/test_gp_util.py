@@ -23,25 +23,27 @@ class TestTikhonovRegularisation(unittest.TestCase):
         #set number of features for each test using rd.num_features
         #(this is our runtime settings file located in gpmalmo)
         rd.num_features=2
-        expr1=sympify('f1*f2')
+        expr1=sympify('f0*f1')
         self.assertEqual(
             grad_tree(expr1),
-            [sympify('f2'),sympify('f1')]
+            [sympify('f1'),sympify('f0')]
         )
         rd.num_features=3
-        expr2=sympify('f1*f2*f3 + f2**2')
+        expr2=sympify('f0*f1*f2 + f1**2')
         self.assertEqual(
             grad_tree(expr2),
-            [sympify('f2*f3'),sympify('f1*f3 + 2*f2'),sympify('f1*f2')]
+            [sympify('f1*f2'),
+            sympify('f0*f2+2*f1'),
+            sympify('f0*f1')]
         )
         rd.num_features=4
-        expr3=sympify('f2*f4 + f1*f2 + 5*f1 - 8*f3')
+        expr3=sympify('f1*f3 + f0*f1 + 5*f0 - 8*f2')
         self.assertEqual(
             grad_tree(expr3),
-            [sympify('f2+5'),
-            sympify('f4+f1'),
+            [sympify('f1+5'),
+            sympify('f3+f0'),
             sympify('-8'),
-            sympify('f2')]
+            sympify('f1')]
         )
 
 if __name__ == '__main__':
