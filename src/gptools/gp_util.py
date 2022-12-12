@@ -293,17 +293,19 @@ def evaluateTreesTR(data_t, toolbox, individual):
     for i, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
+        #print("compiled function: ", str(f))
         func_sympy = human_readable(f)
-        print("sympy function: ",func_sympy)
+        #print("sympy function: ",func_sympy)
         #partial derivatives as callable functions
         pds = grad_tree(func_sympy)
-        print("partial derivatives: ",pds)
+        #print("partial derivatives: ",pds)
         #compile as executable functions
         pds = [toolbox.compile(expr=str(pd)) for pd in pds]
         #call normal tree
         comp = func(*data_t)
         #get total norm of all partial derivatives at point of data
         pd_norm = [la.norm(pd(*data_t)) for pd in pds]
+        #print("partial derivative norms: ",pd_norm)
         pd_norms.append(pd_norm)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
@@ -311,6 +313,8 @@ def evaluateTreesTR(data_t, toolbox, individual):
         result[i] = comp
     dat_array = result.T
     #norm of pd norms
+    #print("Overall pd norms: ",pd_norms)
     TR_term = la.norm(pd_norms)
+    #print("TR term: ",TR_term)
 
     return TR_term, dat_array
