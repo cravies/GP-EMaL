@@ -6,11 +6,15 @@
 * This is because it doesn't take into account functional complexity (among other things)
 * We want to try to improve the complexity measurment so we can better optimise for tree readability
 
-Complexity proxies to implement:
-- [x] Runtime 
-- [x] Tikhonov regularisation
-- [ ] Tree skewness
-- [ ] ?
+Done:
+
+In Alpha:
+* Runtime 
+* Tikhonov regularisation
+
+Unimplemented
+* Tree skewness
+* Dictionary complexity
 
 # How to:
 
