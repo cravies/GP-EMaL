@@ -10,6 +10,7 @@ from gpmalmo import rundata as rd
 from gpmalmo.eval import evalGPMalNC, evalGPMalTime, evalGPMalTR
 from gpmalmo.gp_design import get_pset_weights
 from gpmalmo.gpmalnc_moead import GPMALNCMOEAD
+from gpmalmo.eval_independent import evalGPMalNC_indep
 from gptools.ParallelToolbox import ParallelToolbox
 from gptools.gp_util import *
 from gptools.multitree import *
@@ -85,7 +86,7 @@ if __name__ == "__main__":
 
     if rd.objective=="size":
         print("Minimising neighbourhood structure + tree size")
-        toolbox.register("evaluate", evalGPMalNC, rd.data_t, toolbox)
+        toolbox.register("evaluate", evalGPMalNC_indep, rd.data_t, toolbox)
     elif rd.objective=="time":
         print("Minimising neighbourhood structure + tree eval time")
         toolbox.register("evaluate", evalGPMalTime, rd.data_t, toolbox)
@@ -112,6 +113,39 @@ if __name__ == "__main__":
     assert math.isclose(rd.cxpb + rd.mutpb + rd.mutarpb, 1), "Probabilities of operators should sum to ~1."
 
     print(rd)
+
+    do_parallel = True
+    if do_parallel:
+        # parallelise it
+        import multiprocessing
+        from multiprocessing.sharedctypes import RawArray
+        import signal, sys
+        from eval_independent import init_worker, evalGPMalNC_indep
+
+        # gotta copy arrays and such
+        raw_data_T_shape = rd.data_t.shape
+        raw_data_T = RawArray('d', raw_data_T_shape[0] * raw_data_T_shape[1])
+        raw_data_T_np = np.frombuffer(raw_data_T, dtype=np.float64).reshape(raw_data_T_shape)
+        np.copyto(raw_data_T_np, rd.data_t)
+        raw_all_orderings = rd.all_orderings
+        threads = multiprocessing.cpu_count()
+        print('Using ' + str(threads) + ' threads')
+        pool = multiprocessing.Pool(processes=threads, initializer=init_worker, initargs=(
+            raw_data_T, raw_data_T_shape, raw_all_orderings,rd.identity_ordering))
+        toolbox.register("map", pool.map)
+
+
+        def signal_handler(sig, frame):
+            print('Errored. Closing threads.')
+            pool.terminate()
+            pool.join()
+            sys.exit(1)
+
+
+        # https://stackoverflow.com/questions/2148888/python-trap-all-signals
+        catchable_sigs = {signal.SIGINT}  # set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP}
+        for sig in catchable_sigs:
+            signal.signal(sig, signal_handler)
 
     pop, stats, hof, logbook = main()
 
