@@ -153,7 +153,7 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
     """
     old_files = glob.glob(data.outdir + "*.tree" + ('.gz' if compress else ''))
     old_files += glob.glob(data.outdir + "*.csv" + ('.gz' if compress else ''))
-    time_val, out = evaluateTrees(data.data_t, toolbox, ind)
+    out = evaluateTrees(data.data_t, toolbox, ind)
     columns = ['C' + str(i) for i in range(out.shape[1])]
     df = pd.DataFrame(out, columns=columns)
     df["class"] = data.labels
@@ -235,6 +235,30 @@ def grad_tree(expr):
     return grad_tree
 
 def evaluateTrees(data_t, toolbox, individual):
+    """
+    Evaluate trees
+    """
+    num_instances = data_t.shape[1]
+    num_trees = len(individual)
+
+    if not individual.str or len(individual.str) == 0:
+        raise ValueError(individual)
+
+    result = np.zeros(shape=(num_trees, num_instances))
+
+    for tree_ind, f in enumerate(individual.str):
+        # Transform the tree expression in a callable function
+        func = toolbox.compile(expr=f)
+        #evaluate over data
+        comp = func(*data_t)
+        if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
+            # it decided to just give us a constant back...
+            comp = np.repeat(comp, num_instances)
+        result[tree_ind] = comp
+    dat_array = result.T
+    return dat_array
+
+def evaluateTreesTime(data_t, toolbox, individual):
     """
     Evaluate trees,
     also return time taken

@@ -117,4 +117,9 @@ if __name__ == "__main__":
 
     final_output(hof, toolbox, logbook, pop, rd, pset)
     time_val=float(time.perf_counter() - time_st)
-    print(f"Program took {time_val:.2f} seconds to run.")
+    fmtstr1=f"Objective {rd.objective} took {time_val:.2f} seconds "
+    fmtstr2=f"on dataset {rd.dataset}, ran {rd.gens} generations"
+    mystr=fmtstr1+fmtstr2+"\n"
+    f = open("output.txt", "a")
+    f.write(mystr)
+    f.close()

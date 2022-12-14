@@ -69,6 +69,7 @@ def init_data(rd):
     update_experiment_data(rd, args)
     all_data = read_data("{}{}.data".format(args.dir, args.dataset))
     data = all_data["data"]
+    rd.dataset = args.dataset
     rd.num_instances = data.shape[0]
     rd.num_features = data.shape[1]
     rd.labels = all_data["labels"]

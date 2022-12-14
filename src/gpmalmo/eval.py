@@ -3,12 +3,12 @@ from numba import jit
 
 from gpmalmo import rundata
 from gptools.array_wrapper import ArrayWrapper
-from gptools.gp_util import evaluateTrees, evaluateTreesTR
+from gptools.gp_util import evaluateTrees, evaluateTreesTime, evaluateTreesTR
 from gptools.util import cachedError
 import time
 
 def evalGPMalNC(data_t, toolbox, individual):
-    time_val, dat_array = evaluateTrees(data_t, toolbox, individual)
+    dat_array = evaluateTrees(data_t, toolbox, individual)
 
     hashable = ArrayWrapper(dat_array)
     # in [-1,1]
@@ -34,9 +34,7 @@ def evalGPMalTime(data_t, toolbox, individual):
     Measures error with neigbourhood structure metric, 
     and median tree runtime
     """
-    #evals=30
-    #times=[evaluateTrees(data_t, toolbox, individual)[0] for i in range(evals)]
-    runtime, dat_array = evaluateTrees(data_t, toolbox, individual)
+    runtime, dat_array = evaluateTreesTime(data_t, toolbox, individual)
     hashable = ArrayWrapper(dat_array)
     # in [-1,1]
     # TODO: need to properly consider the situation where there are duplicate ith-nearest neighbours...
