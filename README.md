@@ -11,10 +11,10 @@ Done:
 In Alpha:
 * Runtime 
 * Tikhonov regularisation
+* Dictionary complexity
 
 Unimplemented
 * Tree skewness
-* Dictionary complexity
 
 # How to:
 
