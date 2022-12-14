@@ -108,11 +108,13 @@ def plot_pareto_front(accs, second_obj):
     "second_obj"
     """
     plt.plot(accs, second_obj)
-    plt.xscale('log')
-    plt.xlim([0,1])
-    plt.xticks([0.5e-2,1e-2,0.5e-1,1e-1,0.5,1])
     plt.xlabel("Accuracy proxy loss")
     plt.ylabel(f"{rd.objective}")
     plt.title(f"Accuracy loss and {rd.objective} \n pareto front")
     plt.tight_layout()
     plt.savefig(f"pareto_front_{rd.objective}.png")
+    #write pareto front
+    f = open(f"pareto_{rd.objective}.txt", "a")
+    f.write("accs: "+str(accs)+"\n")
+    f.write(f"{rd.objective}: "+str(second_obj)+"\n")
+    f.close()

@@ -225,16 +225,14 @@ def functional_complexity(expr):
     by counting operations
     """
     ratings={
-        'vadd':1,'vsub':1,'vmul':1,'vdiv':1, 'max':2,
-        'min':2,'np_if':2,'sigmoid':2,'relu':2,'abs':2,
+        'vadd':1,'vsub':1,'vmul':1,'vdiv':2, 'max':2,
+        'min':2,'np_if':2,'sigmoid':3,'relu':3,'abs':2,
     }
-    # count number of times each operator occurs, 
+    # count number of times each operator occurs
     # add its complexity to total
-    total=0
+    # minimum is 1.0 for root node
+    total=1
     for key in ratings.keys():
-        #print(key)
-        #print("appears: ",str(expr).count(key))
-        #print("Adding: ", str(expr).count(key) * ratings[key])
         total += str(expr).count(key) * ratings[key]
     return total
 
