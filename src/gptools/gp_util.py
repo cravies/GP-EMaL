@@ -16,6 +16,7 @@ from scipy.special._ufuncs import expit
 from sympy import sympify
 from gptools.multitree import str_ind
 from gpmalmo import rundata as rd
+from scipy import stats
 
 def protectedDiv(left, right):
     if right == 0:
@@ -218,6 +219,25 @@ def human_readable(individual):
     expr = sympy.sympify(str(individual), locals=locals)
     return expr
 
+def functional_complexity(expr):
+    """
+    Evaluate a tree expression's "functional complexity"
+    by counting operations
+    """
+    ratings={
+        'vadd':1,'vsub':1,'vmul':1,'vdiv':1, 'max':2,
+        'min':2,'np_if':2,'sigmoid':2,'relu':2,'abs':2,
+    }
+    # count number of times each operator occurs, 
+    # add its complexity to total
+    total=0
+    for key in ratings.keys():
+        print(key)
+        print("appears: ",str(expr).count(key))
+        print("Adding: ", str(expr).count(key) * ratings[key])
+        total += str(expr).count(key) * ratings[key]
+    return total
+
 def grad_tree(expr):
     """
     calculate all the partial derivatives of the sympy 
@@ -273,7 +293,7 @@ def evaluateTreesTime(data_t, toolbox, individual):
 
     # time each tree eval times, take median eval time, 
     # sum together for total median eval time
-    evals=30
+    evals=50
     times = np.zeros(shape=(num_trees,evals))
 
     for tree_ind, f in enumerate(individual.str):
@@ -290,8 +310,8 @@ def evaluateTreesTime(data_t, toolbox, individual):
             comp = np.repeat(comp, num_instances)
         result[tree_ind] = comp
     dat_array = result.T
-    #take the median eval time for each tree
-    times = np.median(times,axis=1)
+    #take the trimmed mean eval time for each tree
+    times = stats.trim_mean(times, 0.1, axis=1)
     #sum median execution times for all trees
     time_val = np.sum(times)
     return time_val, dat_array
@@ -302,6 +322,51 @@ def evaluateTreesTR(data_t, toolbox, individual):
     i.e calculate total norm of partial derivatives
     of GP trees w.r.t input features. 
     We will then minimise this term as a secondary objective
+    """
+    num_instances = data_t.shape[1]
+    num_trees = len(individual)
+
+    if not individual.str or len(individual.str) == 0:
+        raise ValueError(individual)
+
+    result = np.zeros(shape=(num_trees, num_instances))
+
+    #partial derivative L2 norms
+    pd_norms = []
+
+    for i, f in enumerate(individual.str):
+        # Transform the tree expression in a callable function
+        func = toolbox.compile(expr=f)
+        #print("compiled function: ", str(f))
+        func_sympy = human_readable(f)
+        #print("sympy function: ",func_sympy)
+        #partial derivatives as callable functions
+        pds = grad_tree(func_sympy)
+        #print("partial derivatives: ",pds)
+        #compile as executable functions
+        pds = [toolbox.compile(expr=str(pd)) for pd in pds]
+        #call normal tree
+        comp = func(*data_t)
+        #get total norm of all partial derivatives at point of data
+        pd_norm = [la.norm(pd(*data_t)) for pd in pds]
+        #print("partial derivative norms: ",pd_norm)
+        pd_norms.append(pd_norm)
+        if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
+            # it decided to just give us a constant back...
+            comp = np.repeat(comp, num_instances)
+        result[i] = comp
+    dat_array = result.T
+    #norm of pd norms
+    #print("Overall pd norms: ",pd_norms)
+    TR_term = la.norm(pd_norms)
+    #print("TR term: ",TR_term)
+
+    return TR_term, dat_array
+
+def evaluateTreesFunctional(data_t, toolbox, individual):
+    """
+    evaluate trees and perform functional complexity 
+    evaluation by our in built evaluation complexity metric
     """
     num_instances = data_t.shape[1]
     num_trees = len(individual)
