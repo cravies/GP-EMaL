@@ -232,9 +232,9 @@ def functional_complexity(expr):
     # add its complexity to total
     total=0
     for key in ratings.keys():
-        print(key)
-        print("appears: ",str(expr).count(key))
-        print("Adding: ", str(expr).count(key) * ratings[key])
+        #print(key)
+        #print("appears: ",str(expr).count(key))
+        #print("Adding: ", str(expr).count(key) * ratings[key])
         total += str(expr).count(key) * ratings[key]
     return total
 
@@ -376,34 +376,24 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
 
     result = np.zeros(shape=(num_trees, num_instances))
 
-    #partial derivative L2 norms
-    pd_norms = []
+    #functional complexity array for set of trees
+    f_comp_arr=[]
 
-    for i, f in enumerate(individual.str):
+    for tree_ind, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
-        #print("compiled function: ", str(f))
-        func_sympy = human_readable(f)
-        #print("sympy function: ",func_sympy)
-        #partial derivatives as callable functions
-        pds = grad_tree(func_sympy)
-        #print("partial derivatives: ",pds)
-        #compile as executable functions
-        pds = [toolbox.compile(expr=str(pd)) for pd in pds]
-        #call normal tree
+        # calculate functional complexity
+        #print("func: ",str(f))
+        f_comp = functional_complexity(str(f))
+        #print("complexity: ",f_comp)
+        f_comp_arr.append(f_comp)
+        #evaluate over data
         comp = func(*data_t)
-        #get total norm of all partial derivatives at point of data
-        pd_norm = [la.norm(pd(*data_t)) for pd in pds]
-        #print("partial derivative norms: ",pd_norm)
-        pd_norms.append(pd_norm)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
             comp = np.repeat(comp, num_instances)
-        result[i] = comp
+        result[tree_ind] = comp
     dat_array = result.T
-    #norm of pd norms
-    #print("Overall pd norms: ",pd_norms)
-    TR_term = la.norm(pd_norms)
-    #print("TR term: ",TR_term)
-
-    return TR_term, dat_array
+    f_comp_total = np.sum(f_comp_arr)
+    #print("total f_comp: ",f_comp_total)
+    return f_comp_total, dat_array

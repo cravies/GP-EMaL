@@ -7,7 +7,7 @@ from sklearn.metrics import pairwise_distances
 
 import gptools.weighted_generators as wg
 from gpmalmo import rundata as rd
-from gpmalmo.eval import evalGPMalNC, evalGPMalTime, evalGPMalTR
+from gpmalmo.eval import evalGPMalNC, evalGPMalTime, evalGPMalTR, evalGPMalFunctional
 from gpmalmo.gp_design import get_pset_weights
 from gpmalmo.gpmalnc_moead import GPMALNCMOEAD
 from gptools.ParallelToolbox import ParallelToolbox
@@ -28,6 +28,9 @@ def main():
     elif rd.objective=="tik":
         stats_tik_norm = tools.Statistics(lambda ind: ind.fitness.values[1])
         mstats = tools.MultiStatistics(cost=stats_cost, tik_norm=stats_tik_norm)
+    elif rd.objective=="functional":
+        stats_functional_comp = tools.Statistics(lambda ind: ind.fitness.values[1])
+        mstats = tools.MultiStatistics(cost=stats_cost, functional_complexity=stats_functional_comp)
     mstats.register("min", np.min, axis=0)
     mstats.register("median", np.median, axis=0)
     mstats.register("max", np.max, axis=0)
@@ -92,6 +95,9 @@ if __name__ == "__main__":
     elif rd.objective=="tik":
         print("Minimising neighbourhood structure + tree tikhonov norm")
         toolbox.register("evaluate", evalGPMalTR, rd.data_t, toolbox)
+    elif rd.objective=="functional":
+        print("Minimising neighbourhood structure + tree functional complexity")
+        toolbox.register("evaluate", evalGPMalFunctional, rd.data_t, toolbox)
     toolbox.register("select", tools.selNSGA2)
     toolbox.register("mate", lim_xmate_aic)
 
