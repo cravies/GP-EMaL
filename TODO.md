@@ -1,5 +1,4 @@
-TODO before break:
-- [ ] Test new (faster) runtime complexity on mfat dataset, look at pareto front and tree plots
+TODO:
+- [ ] Rewrite functional complexity tests
+- [ ] MFAT 10 epochs 1000 pop, all 3 objectives
 - [ ] Implement tree skewness
-- [x] Implement functional dictionary complexity
-- [ ] Investigate optimising multiple objectives (not just 2)
