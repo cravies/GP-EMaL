@@ -5,7 +5,7 @@ import os
 import random
 from pathlib import Path
 from deap import gp
-#import pygraphviz as pgv
+import pygraphviz as pgv
 from gpmalmo import rundata as rd
 import time
 import sympy
@@ -99,7 +99,6 @@ def check_uniqueness(ind1, ind2, num_to_produce, offspring):
             dat_set.add(hash2)
             ind2.str = hash2
             offspring.append(ind2)
-
 """
 The GPMaLMO algorithm takes a set of n input features
 and constructs a set of m GP trees, where m < n.
@@ -120,7 +119,6 @@ ind will be of length 2 because we want to make two constructed features of the 
 Each entry in the pareto front is a candidate for the GP tree that will make that constructed feature.
 We save a picture of each of the constructed feature trees
 """
-"""
 def draw_trees(vnum, ind):
     obj = rd.objective
     print("Objective: ",obj)    
@@ -137,7 +135,6 @@ def draw_trees(vnum, ind):
         #feature fnum, version vnum, second objective obj
         #higher vnum will be better at obj2, worse at obj1 and vice versa
         g.draw(f"feat_{fnum}_ver_{vnum}_obj_{obj}.png")
-"""
 
 def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tree_file=None, del_old=False):
     """ Does some stuff

@@ -18,10 +18,22 @@ Unimplemented
 
 # How to:
 
-Rough usage (from the src/ directory):   
-`python3 -m gpmalmo.gpmal_nc --help`  
-e.g. `python3 -m gpmalmo.gpmal_nc -d COIL20 --dir "datasets/"`
+Usage (from the src/ directory):   
+To run on iris.data (in /src/datasets dir) for 10 generations, using size minimisation 
+as our seconday objective to minimise (alongside neighbourhood structure embedding loss)
+```bash
+make run DATASET=iris GENS=10 OBJ=size
+```
+To clean up output files in the directory:
+```bash
+make clean
+```
+To run (non exhaustive) tests
+```
+make test
+```
 
+Note:
 * Datasets used in the paper are in datasets/
 * Add your own datasets in csv format, with a header line:  
 Header: classPosition,#features,#classes,seperator. e.g.  
