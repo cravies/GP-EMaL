@@ -120,10 +120,7 @@ Each entry in the pareto front is a candidate for the GP tree that will make tha
 We save a picture of each of the constructed feature trees
 """
 def draw_trees(vnum, ind):
-    obj = rd.objective
-    print("Objective: ",obj)    
     for fnum,tree in enumerate(ind):
-        print("vnum: ", vnum)
         nodes, edges, labels = gp.graph(tree)
         g = pgv.AGraph()
         g.add_nodes_from(nodes)
@@ -132,9 +129,9 @@ def draw_trees(vnum, ind):
         for i in nodes:
             n = g.get_node(i)
             n.attr["label"] = labels[i]
-        #feature fnum, version vnum, second objective obj
+        #feature fnum, version vnum
         #higher vnum will be better at obj2, worse at obj1 and vice versa
-        g.draw(f"feat_{fnum}_ver_{vnum}_obj_{obj}.png")
+        g.draw(f"vnum_{vnum}_feat_{fnum}.png")
 
 def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tree_file=None, del_old=False):
     """ Does some stuff

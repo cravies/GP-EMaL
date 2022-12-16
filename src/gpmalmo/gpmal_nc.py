@@ -63,8 +63,16 @@ def pick_nns(rd, step_length=10):
                 indicies.append(next)
         i+=1
 
-def make_ind(toolbox, creator, max_trees):
-    return creator.Individual([toolbox.tree() for _ in range(random.randint(1, max_trees))])
+def make_ind(toolbox, creator, max_trees, fixed=True):
+    """
+    Make our set of constructued output features.
+    If fixed=false, it will allow for random number of output 
+    features for each individual.
+    """
+    if fixed:
+        return creator.Individual([toolbox.tree() for _ in range(max_trees)])
+    else:
+        return creator.Individual([toolbox.tree() for _ in range(random.randint(1, max_trees))])
 
 if __name__ == "__main__":
     #time tree evaluation

@@ -79,7 +79,8 @@ def init_data(rd):
 
 def final_output(hof, toolbox, logbook, pop, rundata, pset):
     for i,res in enumerate(hof):
-        print("feature num: ",i)
+        print("iter i: ",i)
+        print("fitness values: ",res.fitness.values) 
         output_ind(res, toolbox, rundata, compress=False)
         draw_trees(i, res)
     p = Path(rundata.outdir, rundata.logfile + '.gz')
