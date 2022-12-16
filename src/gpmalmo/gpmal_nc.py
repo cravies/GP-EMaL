@@ -70,7 +70,7 @@ def make_ind(toolbox, creator, max_trees, fixed=True):
     features for each individual.
     """
     if fixed:
-        return creator.Individual([toolbox.tree() for _ in range(max_trees)])
+        return creator.Individual([toolbox.tree() for _ in range(int(max_trees/2))])
     else:
         return creator.Individual([toolbox.tree() for _ in range(random.randint(1, max_trees))])
 
