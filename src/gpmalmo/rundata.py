@@ -18,7 +18,7 @@ stores = 0
 
 max_depth = 8
 max_height = 14
-pop_size = 1000
+pop_size = 500
 cxpb = 0.7
 mutpb = 0.3
 mutarpb = 0.0

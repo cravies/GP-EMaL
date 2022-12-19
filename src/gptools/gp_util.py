@@ -386,6 +386,6 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
             comp = np.repeat(comp, num_instances)
         result[tree_ind] = comp
     dat_array = result.T
-    f_comp_total = np.max(f_comp_arr)
+    f_comp_total = np.sum(f_comp_arr)
     #print("total f_comp: ",f_comp_total)
     return f_comp_total, dat_array
