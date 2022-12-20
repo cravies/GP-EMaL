@@ -177,10 +177,17 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
     df_aug.to_csv(p, index=None, compression=compression)
 
     if tree_file:
-        tree_file.write(str(ind[0]))
+        total_complexity=functional_complexity(ind[0])
+        tree_file.write(f"tree: | {str(ind[0])} | ")
+        tree_file.write(f"complexity: {total_complexity}")
         for i in range(1, len(ind)):
             tree_file.write('\n')
-            tree_file.write(str(ind[i]))
+            tree_file.write(f"tree: | {str(ind[i])} | ")
+            comp = functional_complexity(ind[i])
+            total_complexity += comp
+            tree_file.write(f"complexity: {comp}")
+        tree_file.write(f"\ntotal complexity: {total_complexity}")
+        tree_file.write("\n"+"~"*45+"\n")
     else:
         outfile = f_name + '.tree'
         if compress:
@@ -188,11 +195,18 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
 
         p = Path(data.outdir, outfile)
         with gz.open(p, 'wt') if compress else open(p, 'wt') as file:
-            file.write(str(ind[0]))
+            total_complexity = 0
+            total_complexity += functional_complexity(ind[0])
+            file.write(f"tree: | {str(ind[0])} | ")
+            file.write(f"complexity: {total_complexity}")
             for i in range(1, len(ind)):
                 file.write('\n')
-                file.write(str(ind[i]))
-
+                file.write(f"tree: | {str(ind[i])} | ")
+                comp = functional_complexity(ind[i])
+                total_complexity += comp
+                file.write(f"complexity: {comp}")
+            file.write(f"\ntotal complexity: {total_complexity}")
+            file.write("\n"+"~"*45+"\n")
     if del_old:
         for f in old_files:
             try:
@@ -213,21 +227,24 @@ def human_readable(individual):
     expr = sympy.sympify(str(individual), locals=locals)
     return expr
 
-def functional_complexity(expr):
+def functional_complexity(tree):
     """
     Evaluate a tree expression's "functional complexity"
     by counting operations
     """
     ratings={
         'vadd':1,'vsub':1,'vmul':1,'vdiv':2, 'max':2,
-        'min':2,'np_if':2,'sigmoid':3,'relu':3,'abs':2,
+        'min':2,'np_if':2,'abs':2,'sigmoid':3,'relu':3
     }
+    # grab string representation of tree
+    expr = str(tree)
     # count number of times each operator occurs
     # add its complexity to total
-    # minimum is 1.0 for root node
-    total=1
+    total=0
     for key in ratings.keys():
-        total += str(expr).count(key) * ratings[key]
+        total += expr.count(key) * ratings[key]
+    # punish deeper trees
+    total += 1 + tree.height
     return total
 
 def grad_tree(expr):
@@ -371,12 +388,12 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     #functional complexity array for set of trees
     f_comp_arr=[]
 
-    for tree_ind, f in enumerate(individual.str):
+    for tree_ind, f in enumerate(individual):
         # Transform the tree expression in a callable function
-        func = toolbox.compile(expr=f)
+        func = toolbox.compile(expr=str(f))
         # calculate functional complexity
         #print("func: ",str(f))
-        f_comp = functional_complexity(str(f))
+        f_comp = functional_complexity(f)
         #print("complexity: ",f_comp)
         f_comp_arr.append(f_comp)
         #evaluate over data
