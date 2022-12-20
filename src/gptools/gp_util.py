@@ -236,6 +236,7 @@ def functional_complexity(tree):
         'vadd':1,'vsub':1,'vmul':1,'vdiv':2, 'max':2,
         'min':2,'np_if':2,'abs':2,'sigmoid':3,'relu':3
     }
+    print(type(tree))
     # grab string representation of tree
     expr = str(tree)
     # count number of times each operator occurs
@@ -246,6 +247,21 @@ def functional_complexity(tree):
     # punish deeper trees
     total += 1 + tree.height
     return total
+
+def functional_complexity_prototype(tree):
+    """
+    With DEAP our symbolic regression trees are stored as class deap.gp.PrimitiveTree  
+    which is basically an array of nodes. 
+    Need to traverse this tree to find the heigh of nodes that contain certain operators 
+    PrimitiveTree isn't like a normal tree class where you define left child, right child, and node value, etc
+    Class Tree:
+            left_child = Tree()
+            right_child = Tree()
+            node_val = "sin(x)"
+    Need to change the functional complexity measure so that complicated functions like sin(x) have a complexity proportional to their height. 
+    Which would discourage nested functions which are hard to interpret.
+    """
+    raise NotImplementedError("Need to implement.")
 
 def grad_tree(expr):
     """
