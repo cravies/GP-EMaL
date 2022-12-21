@@ -153,12 +153,14 @@ def plot_log(logbook):
     plt.xlabel("generation")
     plt.ylabel("cost")
     plt.savefig(f"{rd.dataset}_{rd.gens}_{rd.objective}_cost.png")
+    plt.close()
     plt.plot(second_obj_median)
     plt.title(second_obj)
     plt.xlabel("generation")
     plt.ylabel(second_obj)
     plt.savefig(f"{rd.dataset}_{rd.gens}_{rd.objective}_{second_obj}.png")
-
+    plt.close()
+    
 def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tree_file=None, del_old=False):
     """ Does some stuff
 
