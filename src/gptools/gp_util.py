@@ -18,6 +18,7 @@ from sympy import sympify
 from gptools.multitree import str_ind
 from gpmalmo import rundata as rd
 from scipy import stats
+from matplotlib import pyplot as plt
 
 def protectedDiv(left, right):
     if right == 0:
@@ -134,6 +135,30 @@ def draw_trees(vnum, ind):
         #higher vnum will be better at obj2, worse at obj1 and vice versa
         g.draw(f"vnum_{vnum}_feat_{fnum}.png")
 
+def plot_log(logbook):
+    """
+    Takes the run logbook and plots the
+    population's median neighbourhood structure loss
+    and second objective loss over generations
+    :param logbook: The GP run logbook
+    """
+    second_obj = rd.objective
+    print("Chapters: ",logbook.chapters)
+    cost_log = logbook.chapters['cost']
+    cost_median = [row['median'] for row in cost_log]
+    second_obj_log = logbook.chapters[second_obj]
+    second_obj_median = [row['median'] for row in second_obj_log]
+    plt.plot(cost_median)
+    plt.title("median neighbourhood structure cost")
+    plt.xlabel("generation")
+    plt.ylabel("cost")
+    plt.savefig(f"{rd.dataset}_{rd.gens}_{rd.objective}_cost.png")
+    plt.plot(second_obj_median)
+    plt.title(second_obj)
+    plt.xlabel("generation")
+    plt.ylabel(second_obj)
+    plt.savefig(f"{rd.dataset}_{rd.gens}_{rd.objective}_{second_obj}.png")
+
 def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tree_file=None, del_old=False):
     """ Does some stuff
 
@@ -244,7 +269,6 @@ def functional_complexity(tree):
     }
     # grab string representation of tree
     expr = str(tree)
-    print(expr)
     # count number of times each operator occurs
     # add its complexity to total
     total=0

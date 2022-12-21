@@ -21,16 +21,16 @@ def main():
     stats_cost = tools.Statistics(lambda ind: ind.fitness.values[0])
     if rd.objective=="size":
         stats_num_trees = tools.Statistics(lambda ind: ind.fitness.values[1])
-        mstats = tools.MultiStatistics(cost=stats_cost, num_trees=stats_num_trees)
+        mstats = tools.MultiStatistics(cost=stats_cost, size=stats_num_trees)
     elif rd.objective=="time":
         stats_tree_time = tools.Statistics(lambda ind: ind.fitness.values[1])
-        mstats = tools.MultiStatistics(cost=stats_cost, tree_runtime=stats_tree_time)
+        mstats = tools.MultiStatistics(cost=stats_cost, time=stats_tree_time)
     elif rd.objective=="tik":
         stats_tik_norm = tools.Statistics(lambda ind: ind.fitness.values[1])
-        mstats = tools.MultiStatistics(cost=stats_cost, tik_norm=stats_tik_norm)
+        mstats = tools.MultiStatistics(cost=stats_cost, tik=stats_tik_norm)
     elif rd.objective=="functional":
-        stats_functional_comp = tools.Statistics(lambda ind: ind.fitness.values[1])
-        mstats = tools.MultiStatistics(cost=stats_cost, functional_complexity=stats_functional_comp)
+        stats_functional = tools.Statistics(lambda ind: ind.fitness.values[1])
+        mstats = tools.MultiStatistics(cost=stats_cost, functional=stats_functional)
     mstats.register("min", np.min, axis=0)
     mstats.register("median", np.median, axis=0)
     mstats.register("max", np.max, axis=0)
@@ -128,6 +128,9 @@ if __name__ == "__main__":
     print(rd)
 
     pop, stats, hof, logbook = main()
+
+    # plot our population run statistics
+    plot_log(logbook)
 
     final_output(hof, toolbox, logbook, pop, rd, pset)
     time_val=float(time.perf_counter() - time_st)
