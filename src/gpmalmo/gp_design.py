@@ -38,7 +38,7 @@ def get_pset_weights(data, num_features, rundata):
     pset.addPrimitive(np.abs,[np.ndarray],np.ndarray,name="abs")
     pset.addPrimitive(np.maximum, [RealArray, RealArray], RealArray, name="max")
     pset.addPrimitive(np.minimum, [RealArray, RealArray], RealArray, name="min")
-    pset.addPrimitive(np_if, [RealArray, RealArray, RealArray], RealArray, name="np_if")
+    #pset.addPrimitive(np_if, [RealArray, RealArray, RealArray], RealArray, name="np_if")
     # deap you muppet
     pset.context["array"] = np.array
     num_ercs = math.ceil(num_features / 10)

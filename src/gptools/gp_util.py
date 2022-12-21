@@ -8,6 +8,7 @@ from deap import gp
 import pygraphviz as pgv
 from gpmalmo import rundata as rd
 import time
+import timeit
 import sympy
 import numpy as np
 from numpy import linalg as la
@@ -220,9 +221,14 @@ def human_readable(individual):
     #using sympy
     locals = {
         'vsub': lambda x, y : x - y,
-        'vdiv': lambda x, y : x/y if y!=0 else 1,
-        'vmul': lambda x, y : x*y,
+        'vdiv': lambda x, y : np_protectedDiv(x,y),
+        'vmul': lambda x, y : x * y,
         'vadd': lambda x, y : x + y,
+        'max': lambda x,y: max(x,y),
+        'min': lambda x,y: min(x,y),
+        'abs': lambda x: abs(x),
+        'sigmoid': lambda x: np_sigmoid(x),
+        'relu': lambda x: np_relu(x)
     }
     expr = sympy.sympify(str(individual), locals=locals)
     return expr
@@ -236,9 +242,9 @@ def functional_complexity(tree):
         'vadd':1,'vsub':1,'vmul':1,'vdiv':2, 'max':2,
         'min':2,'np_if':2,'abs':2,'sigmoid':3,'relu':3
     }
-    print(type(tree))
     # grab string representation of tree
     expr = str(tree)
+    print(expr)
     # count number of times each operator occurs
     # add its complexity to total
     total=0
@@ -261,7 +267,23 @@ def functional_complexity_prototype(tree):
     Need to change the functional complexity measure so that complicated functions like sin(x) have a complexity proportional to their height. 
     Which would discourage nested functions which are hard to interpret.
     """
-    raise NotImplementedError("Need to implement.")
+    ratings={
+        'vadd':1,'vsub':1,'vmul':1,'vdiv':2, 'max':2,
+        'min':2,'np_if':2,'abs':2,'sigmoid':3,'relu':3
+    }
+    # grab string representation of tree
+    expr = str(tree)
+    print(expr)
+    # count number of times each operator occurs
+    # add its complexity to total
+    total=0
+    for key in ratings.keys():
+        print(key)
+        #total += expr.count(key) * ratings[key]
+    # punish deeper trees
+    # total += 1 + tree.height
+    # return total
+    return 5
 
 def grad_tree(expr):
     """
@@ -324,20 +346,19 @@ def evaluateTreesTime(data_t, toolbox, individual):
     for tree_ind, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
-        #evaluate eval times, take median eval time
-        for eval_iter in range(evals):
-            #time tree evaluation
-            time_st = time.perf_counter()
-            comp = func(*data_t)
-            times[tree_ind,eval_iter]=float(time.perf_counter() - time_st)
+        # use timeit timer to measure times
+        times[tree_ind, :]=timeit.repeat(lambda: func(*data_t), repeat=evals, number=10)
+        comp = func(*data_t)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
             comp = np.repeat(comp, num_instances)
         result[tree_ind] = comp
     dat_array = result.T
     #take the trimmed mean eval time for each tree
-    times = stats.trim_mean(times, 0.1, axis=1)
-    #sum median execution times for all trees
+    #times = stats.trim_mean(times, 0.1, axis=1)
+    # UPDATE - take the min.
+    times = np.min(times, axis=1)
+    #sum minimum execution times for all trees
     time_val = np.sum(times)
     return time_val, dat_array
 
