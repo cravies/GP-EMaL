@@ -8,13 +8,12 @@
 
 Done:
 
-In Alpha:
-* Runtime 
-* Tikhonov regularisation
-* Dictionary complexity
+In Testing:
+* Runtime optimisation
+* Functional (dictionary) complexity
 
-Unimplemented
-* Tree skewness
+Abandoned:
+* Tikhonov regularisation (smoothing)
 
 # How to:
 
