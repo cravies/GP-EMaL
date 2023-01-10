@@ -451,12 +451,16 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     #functional complexity array for set of trees
     f_comp_arr=[]
 
-    for tree_ind, f in enumerate(individual):
+    for tree_ind, tree in enumerate(individual):
+        # Traverse the tree
+        nodes, edges, labels = gp.graph(tree)
+        print("~"*30)
+        explore_tree_recursive(0, '', tree, toolbox, labels)
         # Transform the tree expression in a callable function
-        func = toolbox.compile(expr=str(f))
+        func = toolbox.compile(expr=str(tree))
         # calculate functional complexity
         #print("func: ",str(f))
-        f_comp = functional_complexity(f)
+        f_comp = functional_complexity(tree)
         #print("complexity: ",f_comp)
         f_comp_arr.append(f_comp)
         #evaluate over data
@@ -470,19 +474,20 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     #print("total f_comp: ",f_comp_total)
     return f_comp_total, dat_array
 
-def explore_tree_recursive(subtree_root, indent, tree, toolbox, labels, fitnesses, cost_function,
-                           min_fitness=0, max_fitness=1):
+def explore_tree_recursive(subtree_root, indent, tree, toolbox, labels, size=None):
     """
-    traverses the tree and prints it out
+    Traverses the tree and prints it out
 
-    :param subtree_root: The root node for the subtree
+    :param subtree_root: The root node for the subtree. It is an index (int)
     :param indent: The indent string, Starts at ''
     :param tree: The overall DEAP tree object
+    :param toolbox: The DEAP toolbox
+    :param labels: graph labels 
     :returns: Nothing at the moment.
-    :raises keyError: No errors raised atm.
     """
-    sliced = tree.searchSubtree(subtree_root)
-    print(indent + "{}".format(tree[subtree_root].name))
+    subtree = tree.searchSubtree(subtree_root)
+    print(f"{indent}{tree[subtree_root].name}")
+    print("~"*30)
     this_arity = tree[subtree_root].arity
     children = []
     i = 0
@@ -493,6 +498,13 @@ def explore_tree_recursive(subtree_root, indent, tree, toolbox, labels, fitnesse
         i += 1
         idx = child_slice.stop
 
-    #print('{} Children: {}'.format(indent, children))
+    # recursively get size of subtree
+    # start with one to count root of subtree, then recursively apply to children
+    size = 1
     for child in children:
-        explore_tree_recursive(child[0], indent + ' '*2, tree, toolbox, rd, labels, fitnesses, cost_function)
+        size += explore_tree_recursive(child[0], indent + ' '*2, tree, toolbox, labels, size)
+
+    print(f"{indent}{tree[subtree_root].name} subtree size: {size}")
+    print("~"*30)
+
+    return size
