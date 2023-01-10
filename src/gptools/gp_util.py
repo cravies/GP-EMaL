@@ -455,7 +455,8 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
         # Traverse the tree
         nodes, edges, labels = gp.graph(tree)
         print("~"*30)
-        explore_tree_recursive(0, '', tree, toolbox, labels)
+        _, size_dict = explore_tree_recursive({}, 0, '', tree, toolbox, labels)
+        print("size dict: ",size_dict)
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=str(tree))
         # calculate functional complexity
@@ -474,16 +475,18 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     #print("total f_comp: ",f_comp_total)
     return f_comp_total, dat_array
 
-def explore_tree_recursive(subtree_root, indent, tree, toolbox, labels, size=None):
+def explore_tree_recursive(size_dict, subtree_root, indent, tree, toolbox, labels, size=None):
     """
-    Traverses the tree and prints it out
+    Traverses the tree and returns a dict which associates node indices
+    with operator and subtree size.
 
+    :param size_dict: The returned dictionary
     :param subtree_root: The root node for the subtree. It is an index (int)
     :param indent: The indent string, Starts at ''
     :param tree: The overall DEAP tree object
     :param toolbox: The DEAP toolbox
     :param labels: graph labels 
-    :returns: Nothing at the moment.
+    :returns: size_dict, a dictionary that associates node indices with their subtree size and operator
     """
     subtree = tree.searchSubtree(subtree_root)
     print(f"{indent}{tree[subtree_root].name}")
@@ -502,9 +505,14 @@ def explore_tree_recursive(subtree_root, indent, tree, toolbox, labels, size=Non
     # start with one to count root of subtree, then recursively apply to children
     size = 1
     for child in children:
-        size += explore_tree_recursive(child[0], indent + ' '*2, tree, toolbox, labels, size)
+        child_size, size_dict = explore_tree_recursive(size_dict, child[0], indent + ' '*2, tree, toolbox, labels, size)
+        size += child_size
+
+    size_dict[subtree_root] = [tree[subtree_root].name,size] 
+    # sort size dict by node index (i.e key)
+    size_dict = dict(sorted(size_dict.items()))
 
     print(f"{indent}{tree[subtree_root].name} subtree size: {size}")
     print("~"*30)
 
-    return size
+    return size, size_dict
