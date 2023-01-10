@@ -280,36 +280,41 @@ def functional_complexity(tree):
     total += 1 + tree.height
     return total
 
-def functional_complexity_prototype(tree):
+def functional_complexity_nested(tree_dict):
     """
-    With DEAP our symbolic regression trees are stored as class deap.gp.PrimitiveTree  
-    which is basically an array of nodes. 
-    Need to traverse this tree to find the heigh of nodes that contain certain operators 
-    PrimitiveTree isn't like a normal tree class where you define left child, right child, and node value, etc
-    Class Tree:
-            left_child = Tree()
-            right_child = Tree()
-            node_val = "sin(x)"
-    Need to change the functional complexity measure so that complicated functions like sin(x) have a complexity proportional to their height. 
-    Which would discourage nested functions which are hard to interpret.
+    Evaluate a tree expression's "functional complexity"
+    by counting operations.
+    Punish nested functions exponentially to push
+    nonlinear operations towards leaf nodes
+    which makes the tree easier to interpret
     """
     ratings={
-        'vadd':1,'vsub':1,'vmul':1,'vdiv':2, 'max':2,
-        'min':2,'np_if':2,'abs':2,'sigmoid':3,'relu':3
+        'feature':1,
+        'vadd':1,'vsub':1,'vmul':1,'vdiv':1, 
+        'np_if':2,
+        'abs':2, 'max':2, 'min':2,
+        'sigmoid':2,'relu':2
     }
-    # grab string representation of tree
-    expr = str(tree)
-    print(expr)
+    # punish nested functions
+    functions=['np_if','abs','max','min','sigmoid', 'relu']
     # count number of times each operator occurs
     # add its complexity to total
+    # for "function" operators punish exponentially with subtree size
     total=0
-    for key in ratings.keys():
-        print(key)
-        #total += expr.count(key) * ratings[key]
-    # punish deeper trees
-    # total += 1 + tree.height
-    # return total
-    return 5
+    for node in tree_dict:
+        #now add additional penalty for "interpretation complexity"
+        op, subtree_size = tree_dict[node]
+        if op[0]=='f':
+            # we have a feature leaf node, i.e f1, f3, f6
+            op='feature'
+        if op in functions:
+            cost = ratings[op]**(subtree_size-1)
+        else:
+            cost = ratings[op]
+        outstr=f"node: {node} op: {op} subtree size: {subtree_size} complexity: {cost}"
+        print(outstr)
+        total += cost
+    return total
 
 def grad_tree(expr):
     """
@@ -460,9 +465,9 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=str(tree))
         # calculate functional complexity
-        #print("func: ",str(f))
-        f_comp = functional_complexity(tree)
-        #print("complexity: ",f_comp)
+        print("func: ",str(tree))
+        f_comp = functional_complexity_nested(size_dict)
+        print("complexity: ",f_comp)
         f_comp_arr.append(f_comp)
         #evaluate over data
         comp = func(*data_t)
