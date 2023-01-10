@@ -1,10 +1,11 @@
 # GPMaLMO (+ new complexity measures)
 
 # Goal
-* Currenty GPMaLMO optimises embedding accuracy and minimises tree size to make readable trees
-* However tree size is a poor proxy for tree interpretability
-* This is because it doesn't take into account functional complexity (among other things)
-* We want to try to improve the complexity measurment so we can better optimise for tree readability
+* Currenty GPMaLMO optimises embedding accuracy and minimises embedding dimensionality
+* These conflicting objectives result in a pareto front of solutions that represent a trade off between accuracy and dimensionality
+* We want to try to improve the complexity measurment so we minimise tree complexity as a secondary objective instead of embedding dimensionality
+* This will produce more interpretable trees
+* To do this we are trying several different complexity metrics
 
 Done:
 
