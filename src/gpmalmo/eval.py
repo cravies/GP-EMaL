@@ -1,9 +1,11 @@
 import numpy as np
 from numba import jit
 
+from deap import gp
 from gpmalmo import rundata
 from gptools.array_wrapper import ArrayWrapper
 from gptools.gp_util import evaluateTrees, evaluateTreesTime, evaluateTreesTR, evaluateTreesFunctional
+from gptools.gp_util import explore_tree_recursive
 from gptools.util import cachedError
 import time
 
@@ -67,7 +69,13 @@ def evalGPMalFunctional(data_t, toolbox, individual):
     args = (rundata.all_orderings, rundata.identity_ordering, dat_array)
     cost, ratio_uniques = cachedError(hashable, eval_similarity_st, rundata, args=args, kargs={}, index=0)
 
-    #print(f"Runtime: {runtime}")
+    #recursively iterate first constructed feature tree
+    tree = individual[0]
+    print("~"*30)
+    nodes, edges, labels = gp.graph(tree)
+    fitnesses = {}
+    explore_tree_recursive(0, '', tree, toolbox, labels, fitnesses, evaluateTreesFunctional)
+
     if ratio_uniques < 0.9:
         # lower ratio is worse, so higher return value
         # 2- so that always worse than a valid soln

@@ -469,3 +469,30 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     f_comp_total = np.sum(f_comp_arr)
     #print("total f_comp: ",f_comp_total)
     return f_comp_total, dat_array
+
+def explore_tree_recursive(subtree_root, indent, tree, toolbox, labels, fitnesses, cost_function,
+                           min_fitness=0, max_fitness=1):
+    """
+    traverses the tree and prints it out
+
+    :param subtree_root: The root node for the subtree
+    :param indent: The indent string, Starts at ''
+    :param tree: The overall DEAP tree object
+    :returns: Nothing at the moment.
+    :raises keyError: No errors raised atm.
+    """
+    sliced = tree.searchSubtree(subtree_root)
+    print(indent + "{}".format(tree[subtree_root].name))
+    this_arity = tree[subtree_root].arity
+    children = []
+    i = 0
+    idx = subtree_root + 1
+    while i < this_arity:
+        child_slice = tree.searchSubtree(idx)
+        children.append([child_slice.start, child_slice.stop])
+        i += 1
+        idx = child_slice.stop
+
+    #print('{} Children: {}'.format(indent, children))
+    for child in children:
+        explore_tree_recursive(child[0], indent + ' '*2, tree, toolbox, rd, labels, fitnesses, cost_function)

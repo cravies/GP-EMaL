@@ -4,7 +4,7 @@ from pathlib import Path
 from deap import gp
 from matplotlib import pyplot as plt
 from gpmalmo import rundata as rd
-from gptools.gp_util import output_ind, draw_trees
+from gptools.gp_util import output_ind, draw_trees, explore_tree_recursive
 from gptools.read_data import read_data
 
 def update_experiment_data(data, ns):
