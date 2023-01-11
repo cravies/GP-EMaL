@@ -143,7 +143,7 @@ def plot_log(logbook):
     :param logbook: The GP run logbook
     """
     second_obj = rd.objective
-    #print("Chapters: ",logbook.chapters)
+    ##print("Chapters: ",logbook.chapters)
     cost_log = logbook.chapters['cost']
     cost_median = [row['median'] for row in cost_log]
     second_obj_log = logbook.chapters[second_obj]
@@ -291,6 +291,7 @@ def functional_complexity_nested(tree_dict):
     Punish nested functions exponentially to push
     nonlinear operations towards leaf nodes
     which makes the tree easier to interpret
+    Also exponentially punish asymmetry
 
     :param tree_dict: a dictionary that associates node indices with the
     corresponding node operator and size of the subtree that node is the root of
@@ -313,7 +314,9 @@ def functional_complexity_nested(tree_dict):
         # now add additional penalty for "interpretation complexity"
         # tree dict stores node info in [$OPERATION, $SUBTREE_SIZE] format
         # so ['vmul', 10] for example
-        op, subtree_size = tree_dict[node]
+        op, subtree_size, asymmetry = tree_dict[node]
+        # exponentially punish asymmetry, not quite as much as nested fns
+        total += 1.5**asymmetry
         if op[0]=='f':
             # we have a feature leaf node, i.e f1, f3, f6
             op='feature'
@@ -321,8 +324,8 @@ def functional_complexity_nested(tree_dict):
             cost = ratings[op]**(subtree_size-1)
         else:
             cost = ratings[op]
-        outstr=f"node: {node} op: {op} subtree size: {subtree_size} complexity: {cost}"
-        #print(outstr)
+        outstr=f"node: {node} op: {op} subtree size: {subtree_size} asym: {asymmetry} complexity: {cost}"
+        ##print(outstr)
         total += cost
     return total
 
@@ -424,19 +427,19 @@ def evaluateTreesTR(data_t, toolbox, individual):
     for i, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
-        ##print("compiled function: ", str(f))
+        ###print("compiled function: ", str(f))
         func_sympy = human_readable(f)
-        ##print("sympy function: ",func_sympy)
+        ###print("sympy function: ",func_sympy)
         #partial derivatives as callable functions
         pds = grad_tree(func_sympy)
-        ##print("partial derivatives: ",pds)
+        ###print("partial derivatives: ",pds)
         #compile as executable functions
         pds = [toolbox.compile(expr=str(pd)) for pd in pds]
         #call normal tree
         comp = func(*data_t)
         #get total norm of all partial derivatives at point of data
         pd_norm = [la.norm(pd(*data_t)) for pd in pds]
-        ##print("partial derivative norms: ",pd_norm)
+        ###print("partial derivative norms: ",pd_norm)
         pd_norms.append(pd_norm)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
@@ -444,9 +447,9 @@ def evaluateTreesTR(data_t, toolbox, individual):
         result[i] = comp
     dat_array = result.T
     #norm of pd norms
-    ##print("Overall pd norms: ",pd_norms)
+    ###print("Overall pd norms: ",pd_norms)
     TR_term = la.norm(pd_norms)
-    ##print("TR term: ",TR_term)
+    ###print("TR term: ",TR_term)
 
     return TR_term, dat_array
 
@@ -462,8 +465,8 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     as an array of trees which each calculate a constructed feature
     from input features. Stored as a deap.creator.Individual    
     """
-    #print(f"individual type: {type(individual)}, shape: {len(individual)}")
-    #print(f"data_t type: {type(data_t)}, shape: {data_t.shape}")
+    ##print(f"individual type: {type(individual)}, shape: {len(individual)}")
+    ##print(f"data_t type: {type(data_t)}, shape: {data_t.shape}")
     num_instances = data_t.shape[1]
     num_trees = len(individual)
 
@@ -478,16 +481,16 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     for tree_ind, tree in enumerate(individual):
         # Traverse the tree
         nodes, edges, labels = gp.graph(tree)
-        print("~"*30)
-        _, size_dict = explore_tree_recursive({}, 0, '', tree, toolbox, labels)
-        print("~"*30)
-        print("size dict: ",size_dict)
+        #print("~"*30)
+        _, node_dict = explore_tree_recursive({}, 0, '', tree, toolbox, labels)
+        #print("~"*30)
+        #print("size dict: ",node_dict)
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=str(tree))
         # calculate functional complexity
-        #print("func: ",str(tree))
-        f_comp = functional_complexity_nested(size_dict)
-        #print("complexity: ",f_comp)
+        ##print("func: ",str(tree))
+        f_comp = functional_complexity_nested(node_dict)
+        ##print("complexity: ",f_comp)
         f_comp_arr.append(f_comp)
         #evaluate over data
         comp = func(*data_t)
@@ -497,23 +500,24 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
         result[tree_ind] = comp
     dat_array = result.T
     f_comp_total = np.sum(f_comp_arr)
-    ##print("total f_comp: ",f_comp_total)
+    ###print("total f_comp: ",f_comp_total)
     return f_comp_total, dat_array
 
-def explore_tree_recursive(size_dict, subtree_root, indent, tree, toolbox, labels, size=None):
+def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, labels, size=None):
     """
     Traverses the tree and returns a dict which associates node indices
-    with operator and subtree size.
+    with operator, subtree size, and subtree asymmetry.
 
-    :param size_dict: The returned dictionary
+    :param node_dict: The returned dictionary
     :param subtree_root: The root node for the subtree. It is an index (int)
     :param indent: The indent string, Starts at ''
     :param tree: The overall DEAP tree object
     :param toolbox: The DEAP toolbox
     :param labels: graph labels 
-    :returns: size_dict, a dictionary that associates node indices with their subtree size and operator
+    :returns: node_dict, a dictionary that associates node indices with their subtree operator,
+    size, and asymmetry
     
-    example size_dict for tree 'f1': {0: ['f1',1]}
+    example node_dict for tree 'f1': {0: ['f1',1,0]}
     """
     subtree = tree.searchSubtree(subtree_root)
     this_arity = tree[subtree_root].arity
@@ -527,26 +531,40 @@ def explore_tree_recursive(size_dict, subtree_root, indent, tree, toolbox, label
         idx = child_slice.stop
 
     node_op = tree[subtree_root].name
+    """
     if node_op[0]!='f':
         print(f"{indent}{node_op}(")
     else:
         print(f"{indent}{node_op}")
+    
+    print(f"{indent}c: {children}")
+    """
 
     # recursively get size of subtree
     # start with one to count root of subtree, then recursively apply to children
     size = 1
-    for child in children:
-        child_size, size_dict = explore_tree_recursive(size_dict, child[0], indent + ' |', tree, toolbox, labels, size)
+    # also calculate asymmetry by breaking up subtree size into left and right subtree size
+    left_size = 0
+    right_size = 0
+    for i,child in enumerate(children):
+        child_size, node_dict = explore_tree_recursive(node_dict, child[0], indent + ' |', tree, toolbox, labels, size)
         size += child_size
+        if i==0:
+            left_size += child_size
+        else:
+            right_size += child_size
+    asymmetry = abs(left_size - right_size)
 
+    """
     if node_op[0]!='f':
         print(f"{indent})")
-
-    size_dict[subtree_root] = [tree[subtree_root].name,size] 
+    print(f"{indent}asymmetry:{asymmetry}")
+    """
+    node_dict[subtree_root] = [tree[subtree_root].name,size,asymmetry] 
     # sort size dict by node index (i.e key)
-    size_dict = dict(sorted(size_dict.items()))
+    node_dict = dict(sorted(node_dict.items()))
    
-    #print(f"{indent}{tree[subtree_root].name} subtree size: {size}")
-    #print("~"*30)
+    ##print(f"{indent}{tree[subtree_root].name} subtree size: {size}")
+    ##print("~"*30)
 
-    return size, size_dict
+    return size, node_dict

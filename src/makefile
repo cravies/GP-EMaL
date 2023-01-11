@@ -7,7 +7,7 @@ run:
 	tar czf $(DATASET)_$(GENS)_$(OBJ).tar.gz $(DATASET)_$(GENS)_$(OBJ)
 clean:
 	#remove old log files
-	for filetype in png csv tree gz; do \
+	for filetype in png csv tree; do \
 		rm *.$$filetype || echo "no ."$$filetype" found" ; \
 	done
 test:
