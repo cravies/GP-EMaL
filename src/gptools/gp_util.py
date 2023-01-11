@@ -209,13 +209,13 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
 
     # this is bad, really need to refractor this block
     if tree_file:
-        total_complexity=functional_complexity(ind[0])
+        total_complexity=functional_complexity_nested(ind[0])
         tree_file.write(f"tree: | {str(ind[0])} | ")
         tree_file.write(f"complexity: {total_complexity}")
         for i in range(1, len(ind)):
             tree_file.write('\n')
             tree_file.write(f"tree: | {str(ind[i])} | ")
-            comp = functional_complexity(ind[i])
+            comp = functional_complexity_nested(ind[i])
             total_complexity += comp
             tree_file.write(f"complexity: {comp}")
         tree_file.write(f"\ntotal complexity: {total_complexity}")
@@ -228,13 +228,13 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
         p = Path(data.outdir, outfile)
         with gz.open(p, 'wt') if compress else open(p, 'wt') as file:
             total_complexity = 0
-            total_complexity += functional_complexity(ind[0])
+            total_complexity += functional_complexity_nested(ind[0])
             file.write(f"tree: | {str(ind[0])} | ")
             file.write(f"complexity: {total_complexity}")
             for i in range(1, len(ind)):
                 file.write('\n')
                 file.write(f"tree: | {str(ind[i])} | ")
-                comp = functional_complexity(ind[i])
+                comp = functional_complexity_nested(ind[i])
                 total_complexity += comp
                 file.write(f"complexity: {comp}")
             file.write(f"\ntotal complexity: {total_complexity}")
