@@ -478,9 +478,10 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     for tree_ind, tree in enumerate(individual):
         # Traverse the tree
         nodes, edges, labels = gp.graph(tree)
-        #print("~"*30)
+        print("~"*30)
         _, size_dict = explore_tree_recursive({}, 0, '', tree, toolbox, labels)
-        #print("size dict: ",size_dict)
+        print("~"*30)
+        print("size dict: ",size_dict)
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=str(tree))
         # calculate functional complexity
@@ -515,8 +516,6 @@ def explore_tree_recursive(size_dict, subtree_root, indent, tree, toolbox, label
     example size_dict for tree 'f1': {0: ['f1',1]}
     """
     subtree = tree.searchSubtree(subtree_root)
-    #print(f"{indent}{tree[subtree_root].name}")
-    #print("~"*30)
     this_arity = tree[subtree_root].arity
     children = []
     i = 0
@@ -527,17 +526,26 @@ def explore_tree_recursive(size_dict, subtree_root, indent, tree, toolbox, label
         i += 1
         idx = child_slice.stop
 
+    node_op = tree[subtree_root].name
+    if node_op[0]!='f':
+        print(f"{indent}{node_op}(")
+    else:
+        print(f"{indent}{node_op}")
+
     # recursively get size of subtree
     # start with one to count root of subtree, then recursively apply to children
     size = 1
     for child in children:
-        child_size, size_dict = explore_tree_recursive(size_dict, child[0], indent + ' '*2, tree, toolbox, labels, size)
+        child_size, size_dict = explore_tree_recursive(size_dict, child[0], indent + ' |', tree, toolbox, labels, size)
         size += child_size
+
+    if node_op[0]!='f':
+        print(f"{indent})")
 
     size_dict[subtree_root] = [tree[subtree_root].name,size] 
     # sort size dict by node index (i.e key)
     size_dict = dict(sorted(size_dict.items()))
-
+   
     #print(f"{indent}{tree[subtree_root].name} subtree size: {size}")
     #print("~"*30)
 
