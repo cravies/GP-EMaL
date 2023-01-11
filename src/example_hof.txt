@@ -1,0 +1,287 @@
+Each individual is separated by line of ~
+Each individual has two constructed features (trees)
+Hall of fame is ordered in decreasing complexity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(sigmoid(f2), f5), vadd(vadd(f8, f2), f6)), vadd(vdiv(sigmoid(f7), vsub(f0, sigmoid(f1))), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 71.84375
+tree: | vadd(max(sigmoid(vadd(f7, f3)), f6), vadd(vsub(min(f3, sigmoid(f5)), vadd(f7, f6)), sigmoid(vadd(f4, f2)))) | complexity: 121.7734375
+total complexity: 193.6171875
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(sigmoid(f2), f5), vadd(vadd(f8, f2), f6)), vadd(vdiv(sigmoid(f7), vsub(f0, sigmoid(f1))), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 71.84375
+tree: | vadd(max(sigmoid(vadd(f7, f3)), f6), vadd(vsub(min(f3, sigmoid(f5)), vadd(f7, f6)), sigmoid(vadd(f4, f2)))) | complexity: 121.7734375
+total complexity: 193.6171875
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(vmul(f0, f8), f5), vadd(vadd(f4, sigmoid(max(f8, f3))), f0)), vadd(vdiv(vadd(vdiv(f6, f5), f0), vsub(f6, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 99.84375
+tree: | vadd(sigmoid(vsub(f5, vadd(f7, f1))), vadd(vsub(f5, vadd(f7, f6)), f6)) | complexity: 72.65625
+total complexity: 172.5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(vmul(f0, f8), f5), vadd(vadd(f4, sigmoid(max(f8, f3))), f0)), vadd(vdiv(vadd(vdiv(f6, f5), f0), vsub(f6, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 99.84375
+tree: | vadd(sigmoid(vsub(f5, vadd(f7, f1))), vadd(vsub(f5, vadd(f7, f6)), f6)) | complexity: 72.65625
+total complexity: 172.5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(sigmoid(f2), f5), vsub(vsub(relu(f4), min(f4, f8)), vadd(relu(f5), relu(f2)))), vadd(vdiv(vadd(max(f8, f3), f0), vsub(sigmoid(f2), f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 121.50390625
+tree: | vadd(sigmoid(f6), vadd(vsub(f4, vadd(f7, f6)), sigmoid(f4))) | complexity: 39.015625
+total complexity: 160.51953125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(sigmoid(f2), f5), vsub(vsub(relu(f4), min(f4, f8)), vadd(relu(f5), relu(f2)))), vadd(vdiv(vadd(max(f8, f3), f0), vsub(sigmoid(f2), f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 121.50390625
+tree: | vadd(sigmoid(f6), vadd(vsub(f4, vadd(f7, f6)), sigmoid(f4))) | complexity: 39.015625
+total complexity: 160.51953125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(vmul(f0, f8), f5), vadd(vadd(f4, sigmoid(max(f8, f3))), vsub(f0, sigmoid(f6)))), vadd(vdiv(vadd(vdiv(f6, f5), f0), vadd(f3, f6)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 108.140625
+tree: | vadd(sigmoid(vadd(f4, f4)), vadd(vsub(f5, vadd(f7, f6)), f6)) | complexity: 41.0625
+total complexity: 149.203125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(vmul(f0, f8), f5), vadd(vadd(f4, sigmoid(max(f8, f3))), vsub(f0, sigmoid(f6)))), vadd(vdiv(vadd(vdiv(f6, f5), f0), vadd(f3, f6)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 108.140625
+tree: | vadd(sigmoid(vadd(f4, f4)), vadd(vsub(f5, vadd(f7, f6)), f6)) | complexity: 41.0625
+total complexity: 149.203125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(vmul(f0, f8), f5), vadd(vadd(f4, sigmoid(max(f8, f3))), vsub(f0, f2))), vadd(vdiv(vadd(vdiv(f6, f5), f0), vsub(f6, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 101.96875
+tree: | vadd(sigmoid(vadd(f4, f6)), vadd(vsub(f5, vadd(f7, f6)), f6)) | complexity: 41.0625
+total complexity: 143.03125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(vmul(f0, f8), f5), vadd(vadd(f4, sigmoid(max(f8, f3))), vsub(f0, f2))), vadd(vdiv(vadd(vdiv(f6, f5), f0), vsub(f6, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 101.96875
+tree: | vadd(sigmoid(vadd(f4, f6)), vadd(vsub(f5, vadd(f7, f6)), f6)) | complexity: 41.0625
+total complexity: 143.03125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(sigmoid(f2), f6), vdiv(vdiv(sigmoid(f0), f0), sigmoid(f3))) | complexity: 33.125
+tree: | vadd(vadd(vadd(f4, sigmoid(f4)), vadd(f4, vadd(f5, f1))), vadd(sigmoid(f6), vadd(vadd(f5, f7), vadd(vadd(f8, f5), vdiv(f3, f1))))) | complexity: 100.818359375
+total complexity: 133.943359375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(sigmoid(f2), f6), vdiv(vdiv(sigmoid(f0), f0), sigmoid(f3))) | complexity: 33.125
+tree: | vadd(vadd(vadd(f4, sigmoid(f4)), vadd(f4, vadd(f5, f1))), vadd(sigmoid(f6), vadd(vadd(f5, f7), vadd(vadd(f8, f5), vdiv(f3, f1))))) | complexity: 100.818359375
+total complexity: 133.943359375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f0, relu(vdiv(f0, f4))), vadd(vadd(f5, sigmoid(max(f8, f3))), f6)), vadd(vdiv(f0, vsub(f7, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 100.84375
+tree: | vadd(f6, vadd(vsub(f4, f7), sigmoid(f4))) | complexity: 24.59375
+total complexity: 125.4375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f0, relu(vdiv(f0, f4))), vadd(vadd(f5, sigmoid(max(f8, f3))), f6)), vadd(vdiv(f0, vsub(f7, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 100.84375
+tree: | vadd(f6, vadd(vsub(f4, f7), sigmoid(f4))) | complexity: 24.59375
+total complexity: 125.4375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f0, f5), vadd(vadd(f4, sigmoid(max(f8, f3))), f6)), vadd(vdiv(f0, vsub(f0, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 87.6875
+tree: | vadd(vadd(f5, f1), vadd(vsub(f4, vadd(f7, f6)), sigmoid(f4))) | complexity: 35.71875
+total complexity: 123.40625
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f0, f5), vadd(vadd(f4, sigmoid(max(f8, f3))), f6)), vadd(vdiv(f0, vsub(f0, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 87.6875
+tree: | vadd(vadd(f5, f1), vadd(vsub(f4, vadd(f7, f6)), sigmoid(f4))) | complexity: 35.71875
+total complexity: 123.40625
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(sigmoid(f2), sigmoid(vadd(f7, f6))), vdiv(vdiv(sigmoid(f0), f0), sigmoid(f3))) | complexity: 46.875
+tree: | vadd(vadd(vadd(f4, sigmoid(f4)), vadd(f4, vadd(vsub(f8, f3), f1))), vadd(sigmoid(f6), vadd(vadd(f5, f7), sigmoid(sigmoid(f0))))) | complexity: 70.78125
+total complexity: 117.65625
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(sigmoid(f2), sigmoid(vadd(f7, f6))), vdiv(vdiv(sigmoid(f0), f0), sigmoid(f3))) | complexity: 46.875
+tree: | vadd(vadd(vadd(f4, sigmoid(f4)), vadd(f4, vadd(vsub(f8, f3), f1))), vadd(sigmoid(f6), vadd(vadd(f5, f7), sigmoid(sigmoid(f0))))) | complexity: 70.78125
+total complexity: 117.65625
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f0, f5), vadd(vadd(f5, sigmoid(max(f8, f3))), f6)), vadd(vdiv(f0, vsub(f0, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 87.6875
+tree: | vadd(f6, vadd(vsub(f4, f7), sigmoid(f4))) | complexity: 24.59375
+total complexity: 112.28125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f0, f5), vadd(vadd(f5, sigmoid(max(f8, f3))), f6)), vadd(vdiv(f0, vsub(f0, f2)), vdiv(sigmoid(f0), vsub(f2, sigmoid(f1))))) | complexity: 87.6875
+tree: | vadd(f6, vadd(vsub(f4, f7), sigmoid(f4))) | complexity: 24.59375
+total complexity: 112.28125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(sigmoid(vadd(f0, f1)), vmul(f0, vsub(sigmoid(f2), vadd(f3, f2)))) | complexity: 48.03125
+tree: | vadd(vadd(vadd(f1, f3), vadd(vadd(f5, f7), f4)), vadd(sigmoid(f6), vdiv(sigmoid(f8), vadd(f4, f2)))) | complexity: 48.0625
+total complexity: 96.09375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(sigmoid(vadd(f0, f1)), vmul(f0, vsub(sigmoid(f2), vadd(f3, f2)))) | complexity: 48.03125
+tree: | vadd(vadd(vadd(f1, f3), vadd(vadd(f5, f7), f4)), vadd(sigmoid(f6), vdiv(sigmoid(f8), vadd(f4, f2)))) | complexity: 48.0625
+total complexity: 96.09375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(sigmoid(vadd(f0, f1)), vmul(f0, f4)) | complexity: 25.875
+tree: | vadd(vadd(vadd(f1, f3), vadd(vadd(f5, f7), f5)), vadd(sigmoid(f6), vdiv(sigmoid(f8), vadd(f4, f2)))) | complexity: 48.0625
+total complexity: 73.9375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(sigmoid(vadd(f0, f1)), vmul(f0, f4)) | complexity: 25.875
+tree: | vadd(vadd(vadd(f1, f3), vadd(vadd(f5, f7), f5)), vadd(sigmoid(f6), vdiv(sigmoid(f8), vadd(f4, f2)))) | complexity: 48.0625
+total complexity: 73.9375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(sigmoid(vadd(f0, f1)), f3) | complexity: 23.75
+tree: | vadd(vadd(vadd(f1, f4), vadd(vadd(f5, f7), f5)), vadd(sigmoid(f6), vdiv(sigmoid(f8), vadd(f4, f2)))) | complexity: 48.0625
+total complexity: 71.8125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(sigmoid(vadd(f0, f1)), f3) | complexity: 23.75
+tree: | vadd(vadd(vadd(f1, f4), vadd(vadd(f5, f7), f5)), vadd(sigmoid(f6), vdiv(sigmoid(f8), vadd(f4, f2)))) | complexity: 48.0625
+total complexity: 71.8125
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(sigmoid(f2), f3), vadd(f7, f0)) | complexity: 18.5
+tree: | vadd(vadd(sigmoid(f7), vadd(f4, f5)), vadd(sigmoid(f6), vdiv(sigmoid(f0), vadd(f4, f1)))) | complexity: 43.9375
+total complexity: 62.4375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(sigmoid(f2), f3), vadd(f7, f0)) | complexity: 18.5
+tree: | vadd(vadd(sigmoid(f7), vadd(f4, f5)), vadd(sigmoid(f6), vdiv(sigmoid(f0), vadd(f4, f1)))) | complexity: 43.9375
+total complexity: 62.4375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(sigmoid(f4), vdiv(sigmoid(f1), f0)) | complexity: 18.75
+tree: | vadd(vadd(vadd(f1, f3), vadd(f5, f7)), vadd(sigmoid(f6), vdiv(sigmoid(f0), vadd(f4, f2)))) | complexity: 42.8125
+total complexity: 61.5625
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(sigmoid(f4), vdiv(sigmoid(f1), f0)) | complexity: 18.75
+tree: | vadd(vadd(vadd(f1, f3), vadd(f5, f7)), vadd(sigmoid(f6), vdiv(sigmoid(f0), vadd(f4, f2)))) | complexity: 42.8125
+total complexity: 61.5625
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f2, vdiv(sigmoid(f1), f0)) | complexity: 16.375
+tree: | vadd(vadd(vadd(f1, f3), vadd(f5, f7)), vadd(sigmoid(f6), vdiv(sigmoid(f2), vadd(f4, f2)))) | complexity: 42.8125
+total complexity: 59.1875
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f2, vdiv(sigmoid(f1), f0)) | complexity: 16.375
+tree: | vadd(vadd(vadd(f1, f3), vadd(f5, f7)), vadd(sigmoid(f6), vdiv(sigmoid(f2), vadd(f4, f2)))) | complexity: 42.8125
+total complexity: 59.1875
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f2, f7), f2), vdiv(sigmoid(f2), f0)) | complexity: 23.75
+tree: | vadd(vadd(vadd(f1, f3), vadd(f4, f5)), vadd(sigmoid(f6), vadd(f1, f3))) | complexity: 30.5
+total complexity: 54.25
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f2, f7), f2), vdiv(sigmoid(f2), f0)) | complexity: 23.75
+tree: | vadd(vadd(vadd(f1, f3), vadd(f4, f5)), vadd(sigmoid(f6), vadd(f1, f3))) | complexity: 30.5
+total complexity: 54.25
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(f7, f2), vdiv(sigmoid(f2), f0)) | complexity: 18.5
+tree: | vadd(vadd(vadd(f1, f3), vadd(f4, f5)), vadd(sigmoid(f6), vadd(f1, f3))) | complexity: 30.5
+total complexity: 49.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(f7, f2), vdiv(sigmoid(f2), f0)) | complexity: 18.5
+tree: | vadd(vadd(vadd(f1, f3), vadd(f4, f5)), vadd(sigmoid(f6), vadd(f1, f3))) | complexity: 30.5
+total complexity: 49.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f0, f7), f3), vdiv(sigmoid(f2), f0)) | complexity: 23.75
+tree: | vadd(f1, vadd(sigmoid(f6), vadd(f4, f5))) | complexity: 24.59375
+total complexity: 48.34375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f0, f7), f3), vdiv(sigmoid(f2), f0)) | complexity: 23.75
+tree: | vadd(f1, vadd(sigmoid(f6), vadd(f4, f5))) | complexity: 24.59375
+total complexity: 48.34375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f2, f7), f3), vdiv(sigmoid(f2), f4)) | complexity: 23.75
+tree: | vadd(vadd(vadd(f0, f1), f0), vadd(sigmoid(f6), f0)) | complexity: 23.75
+total complexity: 47.5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(vdiv(f2, f7), f3), vdiv(sigmoid(f2), f4)) | complexity: 23.75
+tree: | vadd(vadd(vadd(f0, f1), f0), vadd(sigmoid(f6), f0)) | complexity: 23.75
+total complexity: 47.5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(sigmoid(f2), f3), vdiv(sigmoid(f2), f0)) | complexity: 22.0
+tree: | vadd(f1, vadd(sigmoid(f6), vadd(f4, f5))) | complexity: 24.59375
+total complexity: 46.59375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(sigmoid(f2), f3), vdiv(sigmoid(f2), f0)) | complexity: 22.0
+tree: | vadd(f1, vadd(sigmoid(f6), vadd(f4, f5))) | complexity: 24.59375
+total complexity: 46.59375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(f4, f3), sigmoid(f0)) | complexity: 14.0
+tree: | vadd(vadd(vadd(f2, f7), f2), vadd(sigmoid(f6), vadd(f4, f5))) | complexity: 27.75
+total complexity: 41.75
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vsub(f4, f3), sigmoid(f0)) | complexity: 14.0
+tree: | vadd(vadd(vadd(f2, f7), f2), vadd(sigmoid(f6), vadd(f4, f5))) | complexity: 27.75
+total complexity: 41.75
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f3, f2) | complexity: 6.0
+tree: | vmul(vsub(vadd(sigmoid(f0), sigmoid(f7)), f1), vsub(sigmoid(f6), f4)) | complexity: 35.4375
+total complexity: 41.4375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f3, f2) | complexity: 6.0
+tree: | vmul(vsub(vadd(sigmoid(f0), sigmoid(f7)), f1), vsub(sigmoid(f6), f4)) | complexity: 35.4375
+total complexity: 41.4375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vadd(f5, f1), f3) | complexity: 11.25
+tree: | vmul(vsub(sigmoid(f0), vsub(f1, f2)), vsub(sigmoid(f6), f4)) | complexity: 27.25
+total complexity: 38.5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vadd(f5, f1), f3) | complexity: 11.25
+tree: | vmul(vsub(sigmoid(f0), vsub(f1, f2)), vsub(sigmoid(f6), f4)) | complexity: 27.25
+total complexity: 38.5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f3, f2) | complexity: 6.0
+tree: | vmul(vsub(sigmoid(f0), vsub(f1, f5)), vsub(sigmoid(f6), f4)) | complexity: 27.25
+total complexity: 33.25
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f3, f2) | complexity: 6.0
+tree: | vmul(vsub(sigmoid(f0), vsub(f1, f5)), vsub(sigmoid(f6), f4)) | complexity: 27.25
+total complexity: 33.25
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(sigmoid(f2), f0), f1) | complexity: 16.375
+tree: | vadd(vadd(f4, f3), sigmoid(f6)) | complexity: 14.0
+total complexity: 30.375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(sigmoid(f2), f0), f1) | complexity: 16.375
+tree: | vadd(vadd(f4, f3), sigmoid(f6)) | complexity: 14.0
+total complexity: 30.375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f8, f3) | complexity: 6.0
+tree: | vmul(vsub(sigmoid(f2), f0), vsub(sigmoid(f6), f4)) | complexity: 22.0
+total complexity: 28.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f8, f3) | complexity: 6.0
+tree: | vmul(vsub(sigmoid(f2), f0), vsub(sigmoid(f6), f4)) | complexity: 22.0
+total complexity: 28.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(sigmoid(f2), f0), f3) | complexity: 16.375
+tree: | vadd(f4, sigmoid(f6)) | complexity: 10.0
+total complexity: 26.375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(sigmoid(f2), f0), f3) | complexity: 16.375
+tree: | vadd(f4, sigmoid(f6)) | complexity: 10.0
+total complexity: 26.375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(sigmoid(f4), f0), vadd(f2, sigmoid(f6))) | complexity: 22.0
+tree: | f3 | complexity: 2.0
+total complexity: 24.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(sigmoid(f4), f0), vadd(f2, sigmoid(f6))) | complexity: 22.0
+tree: | f3 | complexity: 2.0
+total complexity: 24.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(sigmoid(f3), f0), f6) | complexity: 16.375
+tree: | vadd(f2, f4) | complexity: 6.0
+total complexity: 22.375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(sigmoid(f3), f0), f6) | complexity: 16.375
+tree: | vadd(f2, f4) | complexity: 6.0
+total complexity: 22.375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vsub(vadd(f2, f4), vdiv(sigmoid(f6), f0)) | complexity: 18.5
+tree: | f3 | complexity: 2.0
+total complexity: 20.5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vsub(vadd(f2, f4), vdiv(sigmoid(f6), f0)) | complexity: 18.5
+tree: | f3 | complexity: 2.0
+total complexity: 20.5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f0, f2) | complexity: 6.0
+tree: | vadd(vadd(f4, f0), sigmoid(f6)) | complexity: 14.0
+total complexity: 20.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f0, f2) | complexity: 6.0
+tree: | vadd(vadd(f4, f0), sigmoid(f6)) | complexity: 14.0
+total complexity: 20.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vsub(f6, vdiv(sigmoid(f2), f0)) | complexity: 16.375
+tree: | f4 | complexity: 2.0
+total complexity: 18.375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vsub(f6, vdiv(sigmoid(f2), f0)) | complexity: 16.375
+tree: | f4 | complexity: 2.0
+total complexity: 18.375
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(f0, f4), f6) | complexity: 11.25
+tree: | vadd(f2, f4) | complexity: 6.0
+total complexity: 17.25
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(vdiv(f0, f4), f6) | complexity: 11.25
+tree: | vadd(f2, f4) | complexity: 6.0
+total complexity: 17.25
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f0, sigmoid(f6)) | complexity: 10.0
+tree: | vadd(f4, f3) | complexity: 6.0
+total complexity: 16.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vadd(f0, sigmoid(f6)) | complexity: 10.0
+tree: | vadd(f4, f3) | complexity: 6.0
+total complexity: 16.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree: | vsub(f6, vdiv(f0, f4)) | complexity: 11.25
+tree: | f2 | complexity: 2.0
+total complexity: 13.25
