@@ -143,7 +143,7 @@ def plot_log(logbook):
     :param logbook: The GP run logbook
     """
     second_obj = rd.objective
-    print("Chapters: ",logbook.chapters)
+    #print("Chapters: ",logbook.chapters)
     cost_log = logbook.chapters['cost']
     cost_median = [row['median'] for row in cost_log]
     second_obj_log = logbook.chapters[second_obj]
@@ -162,7 +162,10 @@ def plot_log(logbook):
     plt.close()
     
 def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tree_file=None, del_old=False):
-    """ Does some stuff
+    """ 
+    Save the individual into an output.tree file
+    As well as .csv, with optional compression
+    Note that this function will be called for all individuals in the pareto front
 
     :param ind: the GP Individual. Assumed two-objective
     :param toolbox: To evaluate the tree
@@ -204,6 +207,7 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
     p = Path(data.outdir, outfile)
     df_aug.to_csv(p, index=None, compression=compression)
 
+    # this is bad, really need to refractor this block
     if tree_file:
         total_complexity=functional_complexity(ind[0])
         tree_file.write(f"tree: | {str(ind[0])} | ")
@@ -287,6 +291,10 @@ def functional_complexity_nested(tree_dict):
     Punish nested functions exponentially to push
     nonlinear operations towards leaf nodes
     which makes the tree easier to interpret
+
+    :param tree_dict: a dictionary that associates node indices with the
+    corresponding node operator and size of the subtree that node is the root of
+    :returns total: the calculated functional complexity of this tree
     """
     ratings={
         'feature':1,
@@ -302,7 +310,9 @@ def functional_complexity_nested(tree_dict):
     # for "function" operators punish exponentially with subtree size
     total=0
     for node in tree_dict:
-        #now add additional penalty for "interpretation complexity"
+        # now add additional penalty for "interpretation complexity"
+        # tree dict stores node info in [$OPERATION, $SUBTREE_SIZE] format
+        # so ['vmul', 10] for example
         op, subtree_size = tree_dict[node]
         if op[0]=='f':
             # we have a feature leaf node, i.e f1, f3, f6
@@ -312,7 +322,7 @@ def functional_complexity_nested(tree_dict):
         else:
             cost = ratings[op]
         outstr=f"node: {node} op: {op} subtree size: {subtree_size} complexity: {cost}"
-        print(outstr)
+        #print(outstr)
         total += cost
     return total
 
@@ -414,19 +424,19 @@ def evaluateTreesTR(data_t, toolbox, individual):
     for i, f in enumerate(individual.str):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=f)
-        #print("compiled function: ", str(f))
+        ##print("compiled function: ", str(f))
         func_sympy = human_readable(f)
-        #print("sympy function: ",func_sympy)
+        ##print("sympy function: ",func_sympy)
         #partial derivatives as callable functions
         pds = grad_tree(func_sympy)
-        #print("partial derivatives: ",pds)
+        ##print("partial derivatives: ",pds)
         #compile as executable functions
         pds = [toolbox.compile(expr=str(pd)) for pd in pds]
         #call normal tree
         comp = func(*data_t)
         #get total norm of all partial derivatives at point of data
         pd_norm = [la.norm(pd(*data_t)) for pd in pds]
-        #print("partial derivative norms: ",pd_norm)
+        ##print("partial derivative norms: ",pd_norm)
         pd_norms.append(pd_norm)
         if (not isinstance(comp, np.ndarray)) or comp.ndim == 0:
             # it decided to just give us a constant back...
@@ -434,9 +444,9 @@ def evaluateTreesTR(data_t, toolbox, individual):
         result[i] = comp
     dat_array = result.T
     #norm of pd norms
-    #print("Overall pd norms: ",pd_norms)
+    ##print("Overall pd norms: ",pd_norms)
     TR_term = la.norm(pd_norms)
-    #print("TR term: ",TR_term)
+    ##print("TR term: ",TR_term)
 
     return TR_term, dat_array
 
@@ -444,7 +454,16 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     """
     evaluate trees and perform functional complexity 
     evaluation by our in built evaluation complexity metric
+
+    :param data_t: The dataset, transposed. Made by gptools.util.init_data.
+    Shape is [num_features, num_instances]
+    :param toolbox: The DEAP toolbox object which stores evolutionary operators
+    :param individual: A individual that represent an output embedding 
+    as an array of trees which each calculate a constructed feature
+    from input features. Stored as a deap.creator.Individual    
     """
+    #print(f"individual type: {type(individual)}, shape: {len(individual)}")
+    #print(f"data_t type: {type(data_t)}, shape: {data_t.shape}")
     num_instances = data_t.shape[1]
     num_trees = len(individual)
 
@@ -459,15 +478,15 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
     for tree_ind, tree in enumerate(individual):
         # Traverse the tree
         nodes, edges, labels = gp.graph(tree)
-        print("~"*30)
+        #print("~"*30)
         _, size_dict = explore_tree_recursive({}, 0, '', tree, toolbox, labels)
-        print("size dict: ",size_dict)
+        #print("size dict: ",size_dict)
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=str(tree))
         # calculate functional complexity
-        print("func: ",str(tree))
+        #print("func: ",str(tree))
         f_comp = functional_complexity_nested(size_dict)
-        print("complexity: ",f_comp)
+        #print("complexity: ",f_comp)
         f_comp_arr.append(f_comp)
         #evaluate over data
         comp = func(*data_t)
@@ -477,7 +496,7 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
         result[tree_ind] = comp
     dat_array = result.T
     f_comp_total = np.sum(f_comp_arr)
-    #print("total f_comp: ",f_comp_total)
+    ##print("total f_comp: ",f_comp_total)
     return f_comp_total, dat_array
 
 def explore_tree_recursive(size_dict, subtree_root, indent, tree, toolbox, labels, size=None):
@@ -492,10 +511,12 @@ def explore_tree_recursive(size_dict, subtree_root, indent, tree, toolbox, label
     :param toolbox: The DEAP toolbox
     :param labels: graph labels 
     :returns: size_dict, a dictionary that associates node indices with their subtree size and operator
+    
+    example size_dict for tree 'f1': {0: ['f1',1]}
     """
     subtree = tree.searchSubtree(subtree_root)
-    print(f"{indent}{tree[subtree_root].name}")
-    print("~"*30)
+    #print(f"{indent}{tree[subtree_root].name}")
+    #print("~"*30)
     this_arity = tree[subtree_root].arity
     children = []
     i = 0
@@ -517,7 +538,7 @@ def explore_tree_recursive(size_dict, subtree_root, indent, tree, toolbox, label
     # sort size dict by node index (i.e key)
     size_dict = dict(sorted(size_dict.items()))
 
-    print(f"{indent}{tree[subtree_root].name} subtree size: {size}")
-    print("~"*30)
+    #print(f"{indent}{tree[subtree_root].name} subtree size: {size}")
+    #print("~"*30)
 
     return size, size_dict
