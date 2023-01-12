@@ -209,13 +209,21 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
 
     # this is bad, really need to refractor this block
     if tree_file:
-        total_complexity=functional_complexity_nested(ind[0])
+        # Traverse the tree
+        nodes, edges, labels = gp.graph(ind[0])
+        #print("~"*30)
+        node_dict = explore_tree_recursive({}, 0, '', ind[0], toolbox, labels)
+        total_complexity=node_dict[0][0]
         tree_file.write(f"tree: | {str(ind[0])} | ")
         tree_file.write(f"complexity: {total_complexity}")
         for i in range(1, len(ind)):
             tree_file.write('\n')
             tree_file.write(f"tree: | {str(ind[i])} | ")
-            comp = functional_complexity_nested(ind[i])
+            # Traverse the tree
+            nodes, edges, labels = gp.graph(ind[i])
+            #print("~"*30)
+            node_dict = explore_tree_recursive({}, 0, '', ind[i], toolbox, labels)
+            comp = node_dict[0][0]
             total_complexity += comp
             tree_file.write(f"complexity: {comp}")
         tree_file.write(f"\ntotal complexity: {total_complexity}")
@@ -227,14 +235,21 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
 
         p = Path(data.outdir, outfile)
         with gz.open(p, 'wt') if compress else open(p, 'wt') as file:
-            total_complexity = 0
-            total_complexity += functional_complexity_nested(ind[0])
+            # Traverse the tree
+            nodes, edges, labels = gp.graph(ind[0])
+            #print("~"*30)
+            node_dict = explore_tree_recursive({}, 0, '', ind[0], toolbox, labels)
+            total_complexity = node_dict[0][0]
             file.write(f"tree: | {str(ind[0])} | ")
             file.write(f"complexity: {total_complexity}")
             for i in range(1, len(ind)):
                 file.write('\n')
                 file.write(f"tree: | {str(ind[i])} | ")
-                comp = functional_complexity_nested(ind[i])
+                # Traverse the tree
+                nodes, edges, labels = gp.graph(ind[i])
+                #print("~"*30)
+                node_dict = explore_tree_recursive({}, 0, '', ind[i], toolbox, labels)
+                comp = node_dict[0][0]
                 total_complexity += comp
                 file.write(f"complexity: {comp}")
             file.write(f"\ntotal complexity: {total_complexity}")
@@ -245,89 +260,6 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
                 os.remove(f)
             except OSError as e:  ## if failed, report it back to the user ##
                 print("Error: %s - %s." % (e.filename, e.strerror))
-
-def human_readable(individual):
-    """ convert a candidate function into a human readable sympy expression""" 
-    #dictionary to translate deap output to human readable
-    #using sympy
-    locals = {
-        'vsub': lambda x, y : x - y,
-        'vdiv': lambda x, y : np_protectedDiv(x,y),
-        'vmul': lambda x, y : x * y,
-        'vadd': lambda x, y : x + y,
-        'max': lambda x,y: max(x,y),
-        'min': lambda x,y: min(x,y),
-        'abs': lambda x: abs(x),
-        'sigmoid': lambda x: np_sigmoid(x),
-        'relu': lambda x: np_relu(x)
-    }
-    expr = sympy.sympify(str(individual), locals=locals)
-    return expr
-
-def functional_complexity(tree):
-    """
-    Evaluate a tree expression's "functional complexity"
-    by counting operations
-    """
-    ratings={
-        'vadd':1,'vsub':1,'vmul':1,'vdiv':2, 'max':2,
-        'min':2,'np_if':2,'abs':2,'sigmoid':3,'relu':3
-    }
-    # grab string representation of tree
-    expr = str(tree)
-    # count number of times each operator occurs
-    # add its complexity to total
-    total=0
-    for key in ratings.keys():
-        total += expr.count(key) * ratings[key]
-    # punish deeper trees
-    total += 1 + tree.height
-    return total
-
-def functional_complexity_nested(tree_dict):
-    """
-    Evaluate a tree expression's "functional complexity"
-    by counting operations.
-    Punish nested functions exponentially to push
-    nonlinear operations towards leaf nodes
-    which makes the tree easier to interpret
-    Also exponentially punish asymmetry
-
-    :param tree_dict: a dictionary that associates node indices with the
-    corresponding node operator and size of the subtree that node is the root of
-    :returns total: the calculated functional complexity of this tree
-    """
-    ratings={
-        'feature':1,
-        'vadd':1,'vsub':1,'vmul':1,'vdiv':1, 
-        'np_if':2,
-        'abs':2, 'max':2, 'min':2,
-        'sigmoid':2,'relu':2
-    }
-    # punish nested functions
-    functions=['np_if','abs','max','min','sigmoid', 'relu']
-    # count number of times each operator occurs
-    # add its complexity to total
-    # for "function" operators punish exponentially with subtree size
-    total=0
-    for node in tree_dict:
-        # now add additional penalty for "interpretation complexity"
-        # tree dict stores node info in [$OPERATION, $SUBTREE_SIZE] format
-        # so ['vmul', 10] for example
-        op, subtree_size, asymmetry = tree_dict[node]
-        # exponentially punish asymmetry, not quite as much as nested fns
-        total += 1.5**asymmetry
-        if op[0]=='f':
-            # we have a feature leaf node, i.e f1, f3, f6
-            op='feature'
-        if op in functions:
-            cost = ratings[op]**(subtree_size-1)
-        else:
-            cost = ratings[op]
-        outstr=f"node: {node} op: {op} subtree size: {subtree_size} asym: {asymmetry} complexity: {cost}"
-        ##print(outstr)
-        total += cost
-    return total
 
 def grad_tree(expr):
     """
@@ -482,15 +414,16 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
         # Traverse the tree
         nodes, edges, labels = gp.graph(tree)
         #print("~"*30)
-        _, node_dict = explore_tree_recursive({}, 0, '', tree, toolbox, labels)
+        node_dict = explore_tree_recursive({}, 0, '', tree, toolbox, labels)
+        #functional complexity is root node complexity
+        f_comp = node_dict[0][0]
         #print("~"*30)
         #print("size dict: ",node_dict)
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=str(tree))
         # calculate functional complexity
-        ##print("func: ",str(tree))
-        f_comp = functional_complexity_nested(node_dict)
-        ##print("complexity: ",f_comp)
+        print("func: ",str(tree))
+        print("complexity: ",f_comp)
         f_comp_arr.append(f_comp)
         #evaluate over data
         comp = func(*data_t)
@@ -515,10 +448,16 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
     :param toolbox: The DEAP toolbox
     :param labels: graph labels 
     :returns: node_dict, a dictionary that associates node indices with their subtree operator,
-    size, and asymmetry
+    size, asymmetry, and children
     
     example node_dict for tree 'f1': {0: ['f1',1,0]}
     """
+
+    #Lists for different types of operator
+    mul_arithmetic=['vmul','vdiv']
+    add_arithmetic=['vadd','vsub']
+    functions=['np_if','abs','max','min','sigmoid', 'relu']
+
     subtree = tree.searchSubtree(subtree_root)
     this_arity = tree[subtree_root].arity
     children = []
@@ -531,40 +470,66 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
         idx = child_slice.stop
 
     node_op = tree[subtree_root].name
-    """
     if node_op[0]!='f':
         print(f"{indent}{node_op}(")
     else:
         print(f"{indent}{node_op}")
-    
-    print(f"{indent}c: {children}")
-    """
 
-    # recursively get size of subtree
-    # start with one to count root of subtree, then recursively apply to children
-    size = 1
-    # also calculate asymmetry by breaking up subtree size into left and right subtree size
-    left_size = 0
-    right_size = 0
-    for i,child in enumerate(children):
-        child_size, node_dict = explore_tree_recursive(node_dict, child[0], indent + ' |', tree, toolbox, labels, size)
-        size += child_size
-        if i==0:
-            left_size += child_size
+    # if we have a feature, just set constant complexity
+    if node_op[0]=='f':
+        complexity = 2
+        size = 1
+        asymmetry=0
+    else:
+        # Else we recursively calculate complexity
+        complexity=0
+        # also calculate asymmetry by breaking up subtree size into left and right subtree size
+        left_comp = 0
+        right_comp = 0
+        left_size = 0
+        right_size = 0
+        for i,child in enumerate(children):
+            child_index = child[0]
+            node_dict = explore_tree_recursive(node_dict, child_index, indent + ' |', tree, toolbox, labels, size)
+            #print(f"{indent}{node_dict}")
+            #print(f"{indent}{node_dict[child_index]}")
+            child_complexity = node_dict[child_index][0]
+            child_size = node_dict[child_index][1]
+            if i==0:
+                left_comp += child_complexity
+                left_size += child_size
+            else:
+                right_comp += child_complexity
+                right_size += child_size
+        # add asymmetry penalty
+        size = left_size + right_size
+        asymmetry = abs(left_size - right_size)
+        complexity += 2**(asymmetry)-1
+        # calculate complexity based on node operation
+        if node_op in add_arithmetic:
+            print(f"{indent}add, {left_comp}+{right_comp}")
+            complexity += left_comp + right_comp
+        elif node_op in mul_arithmetic:
+            print(f"{indent}mul, {left_comp}*{right_comp}")
+            complexity += left_comp * right_comp
+        elif node_op in functions:
+            print(f"{indent}exp, 2**({left_comp}+{right_comp})")
+            complexity = 2**(left_comp + right_comp)
         else:
-            right_size += child_size
-    asymmetry = abs(left_size - right_size)
+            raise ValueError("Node operation not in function set.")
 
-    """
+    #max out complexity at 1m 
+    if complexity>1e6:
+        complexity = float("inf")
+
     if node_op[0]!='f':
         print(f"{indent})")
-    print(f"{indent}asymmetry:{asymmetry}")
-    """
-    node_dict[subtree_root] = [tree[subtree_root].name,size,asymmetry] 
+    print(f"{indent}size: {size} asymmetry:{asymmetry} complexity:{complexity}")
+    node_dict[subtree_root] = [complexity,size] 
     # sort size dict by node index (i.e key)
     node_dict = dict(sorted(node_dict.items()))
    
     ##print(f"{indent}{tree[subtree_root].name} subtree size: {size}")
     ##print("~"*30)
 
-    return size, node_dict
+    return node_dict
