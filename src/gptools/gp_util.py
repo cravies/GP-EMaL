@@ -161,99 +161,54 @@ def plot_log(logbook):
     plt.savefig(f"{rd.dataset}_{rd.gens}_{rd.objective}_{second_obj}.png")
     plt.close()
     
-def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tree_file=None, del_old=False):
+def output_ind(ind, toolbox, data, suffix="", compress=False, del_old=False):
     """ 
-    Save the individual into an output.tree file
-    As well as .csv, with optional compression
+    Save the individual into an output.tree file with optional compression
     Note that this function will be called for all individuals in the pareto front
 
     :param ind: the GP Individual. Assumed two-objective
     :param toolbox: To evaluate the tree
     :param data: dict-like object containing data_t (feature-major array), outdir (string-like),
     dataset (name, string-like), labels (1-n array of class labels)
-    :param suffix: to go after the ".csv/tree"
+    :param suffix: to go before the ".tree"
     :param compress: boolean, compress outputs or not
-    :param csv_file: optional path/buf to output csv to
-    :param tree_file: optional path/buf to output tree to
     :param del_old: delete previous generations or not
     """
     old_files = glob.glob(data.outdir + "*.tree" + ('.gz' if compress else ''))
-    old_files += glob.glob(data.outdir + "*.csv" + ('.gz' if compress else ''))
     out = evaluateTrees(data.data_t, toolbox, ind)
-    columns = ['C' + str(i) for i in range(out.shape[1])]
-    df = pd.DataFrame(out, columns=columns)
-    df["class"] = data.labels
 
     compression = "gzip" if compress else None
 
     f_name = ('{}' + ('-{}' * len(ind.fitness.values)) + '{}').format(data.dataset, *ind.fitness.values, suffix)
 
-    if csv_file:
-        df.to_csv(csv_file, index=None)
-    else:
-        outfile = f_name + '.csv'
-        if compress:
-            outfile = outfile + '.gz'
-        p = Path(data.outdir, outfile)
-        df.to_csv(p, index=None, compression=compression)
-
-    outfile = f_name + '-aug.csv'
-    combined_array = np.concatenate((out, data.data), axis=1)
-    aug_columns = columns + ['X' + str(i) for i in range(data.data.shape[1])]
-    df_aug = pd.DataFrame(combined_array, columns=aug_columns)
-    df_aug["class"] = data.labels
+    outfile = f_name + '.tree'
     if compress:
         outfile = outfile + '.gz'
-    p = Path(data.outdir, outfile)
-    df_aug.to_csv(p, index=None, compression=compression)
 
-    # this is bad, really need to refractor this block
-    if tree_file:
+    print("filename: ",outfile)
+
+    p = Path(data.outdir, outfile)
+    with gz.open(p, 'wt') if compress else open(p, 'wt') as file:
         # Traverse the tree
         nodes, edges, labels = gp.graph(ind[0])
         #print("~"*30)
         node_dict = explore_tree_recursive({}, 0, '', ind[0], toolbox, labels)
-        total_complexity=node_dict[0][0]
-        tree_file.write(f"tree: | {str(ind[0])} | ")
-        tree_file.write(f"complexity: {total_complexity}")
+        total_complexity = node_dict[0][0]
+        file.write(f"tree: | {str(ind[0])} | ")
+        file.write(f"complexity: {total_complexity}")
         for i in range(1, len(ind)):
-            tree_file.write('\n')
-            tree_file.write(f"tree: | {str(ind[i])} | ")
+            file.write('\n')
+            file.write(f"tree: | {str(ind[i])} | ")
             # Traverse the tree
             nodes, edges, labels = gp.graph(ind[i])
             #print("~"*30)
             node_dict = explore_tree_recursive({}, 0, '', ind[i], toolbox, labels)
             comp = node_dict[0][0]
             total_complexity += comp
-            tree_file.write(f"complexity: {comp}")
-        tree_file.write(f"\ntotal complexity: {total_complexity}")
-        tree_file.write("\n"+"~"*45+"\n")
-    else:
-        outfile = f_name + '.tree'
-        if compress:
-            outfile = outfile + '.gz'
-
-        p = Path(data.outdir, outfile)
-        with gz.open(p, 'wt') if compress else open(p, 'wt') as file:
-            # Traverse the tree
-            nodes, edges, labels = gp.graph(ind[0])
-            #print("~"*30)
-            node_dict = explore_tree_recursive({}, 0, '', ind[0], toolbox, labels)
-            total_complexity = node_dict[0][0]
-            file.write(f"tree: | {str(ind[0])} | ")
-            file.write(f"complexity: {total_complexity}")
-            for i in range(1, len(ind)):
-                file.write('\n')
-                file.write(f"tree: | {str(ind[i])} | ")
-                # Traverse the tree
-                nodes, edges, labels = gp.graph(ind[i])
-                #print("~"*30)
-                node_dict = explore_tree_recursive({}, 0, '', ind[i], toolbox, labels)
-                comp = node_dict[0][0]
-                total_complexity += comp
-                file.write(f"complexity: {comp}")
-            file.write(f"\ntotal complexity: {total_complexity}")
-            file.write("\n"+"~"*45+"\n")
+            file.write(f"complexity: {comp}")
+        file.write(f"\ntotal complexity: {total_complexity}")
+        file.write("\n"+"~"*45+"\n")
+    
     if del_old:
         for f in old_files:
             try:
@@ -422,8 +377,8 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=str(tree))
         # calculate functional complexity
-        print("func: ",str(tree))
-        print("complexity: ",f_comp)
+        #print("func: ",str(tree))
+        #print("complexity: ",f_comp)
         f_comp_arr.append(f_comp)
         #evaluate over data
         comp = func(*data_t)
@@ -470,10 +425,12 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
         idx = child_slice.stop
 
     node_op = tree[subtree_root].name
+    """
     if node_op[0]!='f':
         print(f"{indent}{node_op}(")
     else:
         print(f"{indent}{node_op}")
+    """
 
     # if we have a feature, just set constant complexity
     if node_op[0]=='f':
@@ -491,8 +448,8 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
         for i,child in enumerate(children):
             child_index = child[0]
             node_dict = explore_tree_recursive(node_dict, child_index, indent + ' |', tree, toolbox, labels, size)
-            #print(f"{indent}{node_dict}")
-            #print(f"{indent}{node_dict[child_index]}")
+            ##print(f"{indent}{node_dict}")
+            ##print(f"{indent}{node_dict[child_index]}")
             child_complexity = node_dict[child_index][0]
             child_size = node_dict[child_index][1]
             if i==0:
@@ -507,13 +464,13 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
         complexity += 2**(asymmetry)-1
         # calculate complexity based on node operation
         if node_op in add_arithmetic:
-            print(f"{indent}add, {left_comp}+{right_comp}")
+            #print(f"{indent}add, {left_comp}+{right_comp}")
             complexity += left_comp + right_comp
         elif node_op in mul_arithmetic:
-            print(f"{indent}mul, {left_comp}*{right_comp}")
+            #print(f"{indent}mul, {left_comp}*{right_comp}")
             complexity += left_comp * right_comp
         elif node_op in functions:
-            print(f"{indent}exp, 2**({left_comp}+{right_comp})")
+            #print(f"{indent}exp, 2**({left_comp}+{right_comp})")
             complexity = 2**(left_comp + right_comp)
         else:
             raise ValueError("Node operation not in function set.")
@@ -522,9 +479,11 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
     if complexity>1e6:
         complexity = float("inf")
 
+    """
     if node_op[0]!='f':
         print(f"{indent})")
     print(f"{indent}size: {size} asymmetry:{asymmetry} complexity:{complexity}")
+    """
     node_dict[subtree_root] = [complexity,size] 
     # sort size dict by node index (i.e key)
     node_dict = dict(sorted(node_dict.items()))

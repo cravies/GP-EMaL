@@ -129,6 +129,9 @@ if __name__ == "__main__":
 
     pop, stats, hof, logbook = main()
 
+    print("#"*30+"\nHALL OF FAME\n"+"#"*30)
+    print(hof,len(hof))
+
     # plot our population run statistics
     plot_log(logbook)
 

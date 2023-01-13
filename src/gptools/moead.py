@@ -180,11 +180,14 @@ class MOEAD(object):
             if self.verbose:
                 print(logbook.stream)
 
+            # turn off redundant h.o.f tree storage, output_ind is called in main function of gpmalmo/gpmal_nc.py
+            """
             if (gen % 10) == 0:
                 output_ind(self.paretoFront[0], self.toolbox, self.data, suffix="-" + str(gen), del_old=True)
                 for res in self.paretoFront[1:]:
                     # otherwise we'll delete the ones we just created.
                     output_ind(res, self.toolbox, self.data, suffix="-" + str(gen), del_old=False)
+            """
 
             # import matplotlib.pyplot as plt
             #
