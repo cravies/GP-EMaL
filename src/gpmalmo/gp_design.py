@@ -5,7 +5,7 @@ import numpy as np
 from deap import gp
 from scipy.spatial import distance_matrix
 from sklearn.decomposition import PCA
-
+from gpmalmo import rundata as rd
 from gptools.gp_util import np_protectedDiv, np_sigmoid, np_relu, np_if, erc_array
 from gptools.weighted_generators import ProxyArray, RealArray
 
@@ -22,22 +22,33 @@ def get_pset_weights(data, num_features, rundata):
     print(ranked_pca_features)
 
     pset = gp.PrimitiveSetTyped("MAIN", itertools.repeat(RealArray, num_features), ProxyArray, "f")
-
-    pset.addPrimitive(np.add,[ProxyArray,ProxyArray],RealArray,name="vadd")
-    #pset.addPrimitive(np_many_add, [ProxyArray, ProxyArray, ProxyArray, ProxyArray, ProxyArray], RealArray,
-    #                  name="vadd")
-    pset.addPrimitive(np.subtract, [ProxyArray, ProxyArray], RealArray, name="vsub")
-    pset.addPrimitive(np.multiply, [RealArray, RealArray], RealArray, name="vmul")
+   
     """
-    Just comment out non sympy differentiable functions because we want to
-    take function smoothness measures
+    Our function set is passed in as a command line argument -fs when we run the program
+    this gets stored in the rundata module which we import as rd
+    then we can access it here, it will be a string array.
+    We can include the operators in in as primitives in our GP function set.
     """
-    pset.addPrimitive(np_protectedDiv, [RealArray, RealArray], RealArray, name="vdiv")
-    pset.addPrimitive(np_sigmoid, [RealArray], RealArray, name="sigmoid")
-    pset.addPrimitive(np_relu, [RealArray], RealArray, name="relu")
-    pset.addPrimitive(np.abs,[np.ndarray],np.ndarray,name="abs")
-    pset.addPrimitive(np.maximum, [RealArray, RealArray], RealArray, name="max")
-    pset.addPrimitive(np.minimum, [RealArray, RealArray], RealArray, name="min")
+    fs = rd.function_set
+    print("Imported function set: ", fs)
+    if 'add' in fs:
+        pset.addPrimitive(np.add,[ProxyArray,ProxyArray],RealArray,name="vadd")
+    if 'sub' in fs:
+        pset.addPrimitive(np.subtract, [ProxyArray, ProxyArray], RealArray, name="vsub")
+    if 'mul' in fs:
+        pset.addPrimitive(np.multiply, [RealArray, RealArray], RealArray, name="vmul")
+    if 'div' in fs:
+        pset.addPrimitive(np_protectedDiv, [RealArray, RealArray], RealArray, name="vdiv")
+    if 'sigmoid' in fs:
+        pset.addPrimitive(np_sigmoid, [RealArray], RealArray, name="sigmoid")
+    if 'relu' in fs:
+        pset.addPrimitive(np_relu, [RealArray], RealArray, name="relu")
+    if 'abs' in fs:
+        pset.addPrimitive(np.abs,[np.ndarray],np.ndarray,name="abs")
+    if 'max' in fs:
+        pset.addPrimitive(np.maximum, [RealArray, RealArray], RealArray, name="max")
+    if 'min' in fs:
+        pset.addPrimitive(np.minimum, [RealArray, RealArray], RealArray, name="min")
     #pset.addPrimitive(np_if, [RealArray, RealArray, RealArray], RealArray, name="np_if")
     # deap you muppet
     pset.context["array"] = np.array

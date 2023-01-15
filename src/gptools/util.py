@@ -59,7 +59,8 @@ def init_data(rd):
     parser.add_argument("--neighbours-mean", dest="use_neighbours_mean", action="store_true")
     parser.add_argument("--trees", dest="max_trees", type=int)
     parser.add_argument("-ob", "--obj", help="objective (time or size)", type=str, default="size")
-
+    parser.add_argument("-fs", "--funcset", help="function set", 
+        type=str, default="add,sub,mul,div,max,min,relu,sigmoid")
     parser.set_defaults(use_ercs=False)
     parser.set_defaults(use_zeros=False)
     parser.set_defaults(use_neighbours=False)
@@ -76,6 +77,8 @@ def init_data(rd):
     rd.data = data
     rd.data_t = data.T
     rd.objective = args.obj
+    rd.function_set = args.funcset.split(',')
+    print("Functions set: ", rd.function_set)
 
 def final_output(hof, toolbox, logbook, pop, rundata, pset):
     for i,res in enumerate(hof):

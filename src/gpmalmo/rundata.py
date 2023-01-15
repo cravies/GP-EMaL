@@ -28,3 +28,6 @@ objective = "size"
 
 num_instances = 0
 num_features = 0
+
+function_set=['add','sub','mul','div',
+            'relu','sigmoid','max','min']
