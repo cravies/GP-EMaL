@@ -1,6 +1,5 @@
 TODO:
-- [ ] Linear depth penalty in functional to discourage long trees
-- [ ] Functional complexity tests
+- [ ] Command line arguments to specify operator costs
 - [ ] Fix job scheduling script
 - [ ] Test functional vs time complexity on all datasets
 - [ ] Write summary document
