@@ -409,10 +409,6 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
     """
 
     #Lists for different types of operator
-    mul_arithmetic=['vmul','vdiv']
-    add_arithmetic=['vadd','vsub']
-    functions=['np_if','abs','max','min','sigmoid', 'relu']
-
     subtree = tree.searchSubtree(subtree_root)
     this_arity = tree[subtree_root].arity
     children = []
@@ -425,12 +421,10 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
         idx = child_slice.stop
 
     node_op = tree[subtree_root].name
-    """
     if node_op[0]!='f':
         print(f"{indent}{node_op}(")
     else:
         print(f"{indent}{node_op}")
-    """
 
     # if we have a feature, just set constant complexity
     if node_op[0]=='f':
@@ -463,27 +457,31 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
         asymmetry = abs(left_size - right_size)
         complexity += 2**(asymmetry)-1
         # calculate complexity based on node operation
-        if node_op in add_arithmetic:
-            #print(f"{indent}add, {left_comp}+{right_comp}")
+        cost = rd.cost_dict[node_op]
+        print(f"op: {node_op}, cost: {cost}")
+        if cost.isdigit():
+            #we have a numerical cost
+            print(f"{indent}const, {cost}")
+            complexity += int(cost) + left_comp + right_comp
+        elif cost=='sum':
+            print(f"{indent}add, {left_comp}+{right_comp}")
             complexity += left_comp + right_comp
-        elif node_op in mul_arithmetic:
-            #print(f"{indent}mul, {left_comp}*{right_comp}")
+        elif cost=='prod':
+            print(f"{indent}mul, {left_comp}*{right_comp}")
             complexity += left_comp * right_comp
-        elif node_op in functions:
-            #print(f"{indent}exp, 2**({left_comp}+{right_comp})")
+        elif cost=='exp':
+            print(f"{indent}exp, 2**({left_comp}+{right_comp})")
             complexity = 2**(left_comp + right_comp)
         else:
-            raise ValueError("Node operation not in function set.")
+            raise ValueError("Node cost error.")
 
     #max out complexity at 1m 
     if complexity>1e6:
         complexity = float("inf")
 
-    """
     if node_op[0]!='f':
         print(f"{indent})")
     print(f"{indent}size: {size} asymmetry:{asymmetry} complexity:{complexity}")
-    """
     node_dict[subtree_root] = [complexity,size] 
     # sort size dict by node index (i.e key)
     node_dict = dict(sorted(node_dict.items()))

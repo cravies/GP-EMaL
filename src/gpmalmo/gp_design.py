@@ -31,13 +31,13 @@ def get_pset_weights(data, num_features, rundata):
     """
     fs = rd.function_set
     print("Imported function set: ", fs)
-    if 'add' in fs:
+    if 'vadd' in fs:
         pset.addPrimitive(np.add,[ProxyArray,ProxyArray],RealArray,name="vadd")
-    if 'sub' in fs:
+    if 'vsub' in fs:
         pset.addPrimitive(np.subtract, [ProxyArray, ProxyArray], RealArray, name="vsub")
-    if 'mul' in fs:
+    if 'vmul' in fs:
         pset.addPrimitive(np.multiply, [RealArray, RealArray], RealArray, name="vmul")
-    if 'div' in fs:
+    if 'vdiv' in fs:
         pset.addPrimitive(np_protectedDiv, [RealArray, RealArray], RealArray, name="vdiv")
     if 'sigmoid' in fs:
         pset.addPrimitive(np_sigmoid, [RealArray], RealArray, name="sigmoid")
