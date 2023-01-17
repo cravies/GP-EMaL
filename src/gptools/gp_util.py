@@ -5,7 +5,7 @@ import os
 import random
 from pathlib import Path
 from deap import gp
-import pygraphviz as pgv
+#import pygraphviz as pgv
 from gpmalmo import rundata as rd
 import time
 import timeit
@@ -121,6 +121,7 @@ ind will be of length 2 because we want to make two constructed features of the 
 Each entry in the pareto front is a candidate for the GP tree that will make that constructed feature.
 We save a picture of each of the constructed feature trees
 """
+"""
 def draw_trees(vnum, ind):
     for fnum,tree in enumerate(ind):
         nodes, edges, labels = gp.graph(tree)
@@ -134,6 +135,7 @@ def draw_trees(vnum, ind):
         #feature fnum, version vnum
         #higher vnum will be better at obj2, worse at obj1 and vice versa
         g.draw(f"vnum_{vnum}_feat_{fnum}.png")
+"""
 
 def plot_log(logbook):
     """
