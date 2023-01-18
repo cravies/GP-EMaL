@@ -1,28 +1,8 @@
-# GPMaLMO (+ new complexity measures)
-
-# Goal
-* Currenty GPMaLMO optimises embedding accuracy and minimises embedding dimensionality
-* These conflicting objectives result in a pareto front of solutions that represent a trade off between accuracy and dimensionality
-* We want to try to improve the complexity measurment so we minimise tree complexity as a secondary objective instead of embedding dimensionality
-* This will produce more interpretable trees
-* To do this we are trying several different complexity metrics
-
-Done:
-
-In Testing:
-* Runtime optimisation
-* Functional (dictionary) complexity
-
-Abandoned:
-* Tikhonov regularisation (smoothing)
-
-# How to:
-
 Usage (from the src/ directory):   
-To run on iris.data (in /src/datasets dir) for 10 generations, using size minimisation 
+To run on iris.data (in /src/datasets dir) for 10 generations, using functional minimisation 
 as our seconday objective to minimise (alongside neighbourhood structure embedding loss)
 ```bash
-make run DATASET=iris GENS=10 OBJ=size
+make run DATASET=iris GENS=3 OBJ=functional DIR="./datasets/"
 ```
 To clean up output files in the directory:
 ```bash
