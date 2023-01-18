@@ -1,3 +1,4 @@
+import os
 import argparse
 import gzip as gz
 from pathlib import Path
@@ -6,6 +7,7 @@ from matplotlib import pyplot as plt
 from gpmalmo import rundata as rd
 from gptools.gp_util import output_ind, explore_tree_recursive
 from gptools.read_data import read_data
+import pandas as pd
 
 def update_experiment_data(data, ns):
     dict = vars(ns)
@@ -96,33 +98,34 @@ def final_output(hof, toolbox, logbook, pop, rundata, pset):
     pop_stats = [str(p.fitness) for p in pop]
     pop_stats.sort()
     hof_stats = [str(h.fitness) for h in hof]
-    #accuracy proxy arr for pareto front
-    accs = [h.fitness.values[0] for h in hof]
+    #loss arr for pareto front
+    loss = [h.fitness.values[0] for h in hof]
     #second objective arr for pareto front
     second_obj = [h.fitness.values[1] for h in hof]
-    plot_pareto_front(accs, second_obj)
+    output_pareto_front(loss, second_obj)
     # hof_stats.sort()
     print("POP:")
     print("\n".join(pop_stats))
     print("PF:")
     print("\n".join(hof_stats))
 
-def plot_pareto_front(accs, second_obj):
+
+def output_pareto_front(loss, second_obj, output_path="results.csv"):
     """
     Plot the pareto front tradeoff between 
-    Neighbourhood structure (accuracy proxy)
-    "accs"
+    Neighbourhood structure loss
+    "loss"
     And second objective metric
     "second_obj"
+    Also write to results database file
     """
-    plt.plot(accs, second_obj)
+    plt.plot(loss, second_obj)
     plt.xlabel("Accuracy proxy loss")
     plt.ylabel(f"{rd.objective}")
     plt.title(f"Accuracy loss and {rd.objective} \n pareto front")
     plt.tight_layout()
     plt.savefig(f"pareto_front_{rd.objective}.png")
-    #write pareto front
-    f = open(f"pareto_{rd.objective}.txt", "a")
-    f.write("accs: "+str(accs)+"\n")
-    f.write(f"{rd.objective}: "+str(second_obj)+"\n")
-    f.close()
+    #write pareto front to results csv file
+    dataframe = {"loss":loss, "second_objective":second_obj, "generations":rd.gens, "metric":rd.objective}
+    df = pd.DataFrame(data=dataframe)
+    df.to_csv(output_path, mode='a', header=not os.path.exists(output_path))
