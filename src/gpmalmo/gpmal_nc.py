@@ -63,7 +63,7 @@ def pick_nns(rd, step_length=10):
                 indicies.append(next)
         i+=1
 
-def make_ind(toolbox, creator, max_trees, fixed=True):
+def make_ind(toolbox, creator, max_trees, fixed=False):
     """
     Make our set of constructued output features.
     If fixed=false, it will allow for random number of output 

@@ -62,9 +62,9 @@ def init_data(rd):
     parser.add_argument("--trees", dest="max_trees", type=int)
     parser.add_argument("-ob", "--obj", help="objective (time or size)", type=str, default="size")
     parser.add_argument("-fs", "--funcset", help="function set", 
-        type=str, default="vadd,vsub,vmul,vdiv,max,min,relu,sigmoid")
+        type=str, default="vadd,vsub,vmul,vdiv,max,min,relu,sigmoid,abs")
     parser.add_argument("-oc", "--opcosts", help="node operation costs",
-        type=str, default="sum,sum,prod,prod,exp,exp,exp,exp")
+        type=str, default="sum,sum,prod,prod,exp,exp,exp,exp,exp")
     parser.set_defaults(use_ercs=False)
     parser.set_defaults(use_zeros=False)
     parser.set_defaults(use_neighbours=False)
