@@ -101,6 +101,22 @@ def check_uniqueness(ind1, ind2, num_to_produce, offspring):
             dat_set.add(hash2)
             ind2.str = hash2
             offspring.append(ind2)
+
+def scaling_term(tree,mu=0.75):
+    """
+    Calculate the scaling term for the tree
+    Punishes larger trees in a stepwise manner
+    Default mu=0.75
+    alpha = tree_height/max_height
+    S = 1 if alpha < mu(0.75)
+    S = 2*alpha if alpha > mu(0.75)
+    """
+    alpha = tree.height / rd.max_depth
+    if alpha < 0.75:
+        return 1
+    else:
+        return 2*alpha
+
 """
 The GPMaLMO algorithm takes a set of n input features
 and constructs a set of m GP trees, where m < n.
@@ -418,6 +434,9 @@ def evaluateTreesFunctional(data_t, toolbox, individual):
         node_dict = explore_tree_recursive({}, 0, '', tree, toolbox, labels)
         #functional complexity is root node complexity
         f_comp = node_dict[0][0]
+        #scale by scaling term to punish larger trees
+        scale = scaling_term(tree)
+        f_comp *= scale
         #print("~"*30)
         #print("size dict: ",node_dict)
         # Transform the tree expression in a callable function
@@ -467,10 +486,12 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
         idx = child_slice.stop
 
     node_op = tree[subtree_root].name
+    """
     if node_op[0]!='f':
         print(f"{indent}{node_op}(")
     else:
         print(f"{indent}{node_op}")
+    """
 
     # if we have a feature, just set constant complexity
     if node_op[0]=='f':
@@ -504,19 +525,19 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
         complexity += 2**(asymmetry)-1
         # calculate complexity based on node operation
         cost = rd.cost_dict[node_op]
-        print(f"op: {node_op}, cost: {cost}")
+        #print(f"op: {node_op}, cost: {cost}")
         if cost.isdigit():
             #we have a numerical cost
-            print(f"{indent}const, {cost}")
+            #print(f"{indent}const, {cost}")
             complexity += int(cost) + left_comp + right_comp
         elif cost=='sum':
-            print(f"{indent}add, {left_comp}+{right_comp}")
+            #print(f"{indent}add, {left_comp}+{right_comp}")
             complexity += left_comp + right_comp
         elif cost=='prod':
-            print(f"{indent}mul, {left_comp}*{right_comp}")
+            #print(f"{indent}mul, {left_comp}*{right_comp}")
             complexity += left_comp * right_comp
         elif cost=='exp':
-            print(f"{indent}exp, 2**({left_comp}+{right_comp})")
+            #print(f"{indent}exp, 2**({left_comp}+{right_comp})")
             complexity = 2**(left_comp + right_comp)
         else:
             raise ValueError("Node cost error.")
@@ -524,10 +545,12 @@ def explore_tree_recursive(node_dict, subtree_root, indent, tree, toolbox, label
     #max out complexity at 1m 
     if complexity>1e6:
         complexity = float("inf")
-
+    
+    """
     if node_op[0]!='f':
         print(f"{indent})")
     print(f"{indent}size: {size} asymmetry:{asymmetry} complexity:{complexity}")
+    """
     node_dict[subtree_root] = [complexity,size] 
     # sort size dict by node index (i.e key)
     node_dict = dict(sorted(node_dict.items()))

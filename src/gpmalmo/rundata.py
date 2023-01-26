@@ -16,8 +16,8 @@ fitnessCache = defaultlist(lambda: cachetools.LRUCache(maxsize=1e6))
 accesses = 0
 stores = 0
 
-max_depth = 8
-max_height = 14
+max_depth = 10
+max_height = 10
 pop_size = 500
 cxpb = 0.7
 mutpb = 0.3
