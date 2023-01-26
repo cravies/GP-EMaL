@@ -102,17 +102,17 @@ def check_uniqueness(ind1, ind2, num_to_produce, offspring):
             ind2.str = hash2
             offspring.append(ind2)
 
-def scaling_term(tree,mu=0.75):
+def scaling_term(tree,mu=1.0):
     """
     Calculate the scaling term for the tree
     Punishes larger trees in a stepwise manner
-    Default mu=0.75
+    Default mu=1.0 (no scaling)
     alpha = tree_height/max_height
-    S = 1 if alpha < mu(0.75)
-    S = 2*alpha if alpha > mu(0.75)
+    S = 1 if alpha < mu
+    S = 2*alpha if alpha > mu
     """
     alpha = tree.height / rd.max_depth
-    if alpha < 0.75:
+    if alpha < mu:
         return 1
     else:
         return 2*alpha
