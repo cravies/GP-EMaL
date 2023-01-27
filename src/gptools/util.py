@@ -87,10 +87,25 @@ def init_data(rd):
     rd.cost_dict = {k:v for k, v in zip(rd.function_set,rd.function_costs)}
 
 def final_output(hof, toolbox, logbook, pop, rundata, pset):
+    #grab run number from textfile
+    with open('run.txt') as f:
+        lines = f.readlines()
+        line = lines[-1]
+        print("####LINE: ######",line.strip())
+        num = line.strip()
+        if num=='':
+            num=1
+        else:
+            num=int(num)
+    f = open("run.txt", "a")
+    f.write(f"{(num+1)%30}\n")
+    f.close()
+    #file to output to
+    fname=f"{rd.dataset}_run_{num}"
     for i,res in enumerate(hof):
         print("iter i: ",i)
         print("fitness values: ",res.fitness.values) 
-        output_ind(res, toolbox, rundata, compress=False)
+        output_ind(res, toolbox, rundata, compress=False, csv_file=fname)
         #draw_trees(i, res)
     p = Path(rundata.outdir, rundata.logfile + '.gz')
     with gz.open(p, 'wt') as file:
