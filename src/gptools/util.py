@@ -54,7 +54,7 @@ def init_data(rd):
     parser.add_argument("--dir", help="Dataset directory", type=str,
                         default="/home/lensenandr/datasetsPy/")
     parser.add_argument("-g", "--gens", help="Number of generations", type=int,default=1000)
-    parser.add_argument("-od", "--outdir", help="Output directory", type=str, default="./")
+    parser.add_argument("-od", "--outdir", help="Output directory", type=str, default="./runs")
     parser.add_argument("--erc", dest='use_ercs', action='store_true')
     parser.add_argument("--zeros", dest='use_zeros', action='store_true')
     parser.add_argument("--neighbours", dest="use_neighbours", action="store_true")
@@ -85,27 +85,33 @@ def init_data(rd):
     rd.function_costs = args.opcosts.split(',')
     #make dictionary associating node operations with cost
     rd.cost_dict = {k:v for k, v in zip(rd.function_set,rd.function_costs)}
+    rd.outdir=args.outdir
 
 def final_output(hof, toolbox, logbook, pop, rundata, pset):
-    #grab run number from textfile
-    with open('run.txt') as f:
-        lines = f.readlines()
-        line = lines[-1]
-        print("####LINE: ######",line.strip())
-        num = line.strip()
-        if num=='':
-            num=1
-        else:
+    # grab run number from textfile
+    try:
+        with open('run.txt') as f:
+            lines = f.readlines()
+            line = lines[-1]
+            print("####LINE: ######",line.strip())
+            num = line.strip()
             num=int(num)
+    except FileNotFoundError:
+        # it is the initial run
+        # i.e no textfile
+        num=0
+    #now write run# to file
     f = open("run.txt", "a")
     f.write(f"{(num+1)%30}\n")
     f.close()
     #file to output to
-    fname=f"{rd.dataset}_run_{num}"
+    fname=f"/{rd.dataset}_run_{num+1}/"
+    #make outdir just in case it doesnt exist
+    os.makedirs(rd.outdir+fname, exist_ok=True)
     for i,res in enumerate(hof):
         print("iter i: ",i)
         print("fitness values: ",res.fitness.values) 
-        output_ind(res, toolbox, rundata, compress=False, csv_file=fname)
+        output_ind(res, toolbox, rundata, compress=False, out_dir=rd.outdir+fname)
         #draw_trees(i, res)
     p = Path(rundata.outdir, rundata.logfile + '.gz')
     with gz.open(p, 'wt') as file:

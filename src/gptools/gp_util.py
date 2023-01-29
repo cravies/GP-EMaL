@@ -117,42 +117,6 @@ def scaling_term(tree,mu=0.8):
     else:
         return 2*alpha
 
-"""
-The GPMaLMO algorithm takes a set of n input features
-and constructs a set of m GP trees, where m < n.
-These GP trees take the input features and construct output features
-in the (m dimensional) embedding. 
-Because GPMaLMO optimises two objectives, the possible GP tree solutions
-form a pareto front, which is a set of GP trees with varying scores on the two 
-objectives. If there were only 3 in the pareto front, it would look like this.
-[[good obj 1, bad obj 2], [ok obj 1, ok obj 2], [bad obj 1, good obj 2]]
-You can see this gives us the range of possible outcomes. each entry in the pareto front is 
-pareto optimal in the sense that you can't improve its overall score because to increase 
-its score on one objective would be to decrease it on another.
-
-INPUT:
-Ind is an "individual": a point in the pareto front. (point given by vnum, i.e "version" number)
-For example if we have an input dataset of dimensionality 3 (as in the iris dataset)
-ind will be of length 2 because we want to make two constructed features of the 3 input features.
-Each entry in the pareto front is a candidate for the GP tree that will make that constructed feature.
-We save a picture of each of the constructed feature trees
-"""
-"""
-def draw_trees(vnum, ind):
-    for fnum,tree in enumerate(ind):
-        nodes, edges, labels = gp.graph(tree)
-        g = pgv.AGraph()
-        g.add_nodes_from(nodes)
-        g.add_edges_from(edges)
-        g.layout(prog="dot")
-        for i in nodes:
-            n = g.get_node(i)
-            n.attr["label"] = labels[i]
-        #feature fnum, version vnum
-        #higher vnum will be better at obj2, worse at obj1 and vice versa
-        g.draw(f"vnum_{vnum}_feat_{fnum}.png")
-"""
-
 def plot_log(logbook):
     """
     Takes the run logbook and plots the
@@ -178,24 +142,23 @@ def plot_log(logbook):
     plt.ylabel(second_obj)
     plt.savefig(f"{rd.dataset}_{rd.gens}_{rd.objective}_{second_obj}.png")
     plt.close()
-    
-def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tree_file=None, del_old=False):
-    """ 
-    Save the individual into an output.tree file
-    As well as .csv, with optional compression
-    Note that this function will be called for all individuals in the pareto front
+
+def output_ind(ind, toolbox, data, suffix="", compress=False, out_dir=rd.outdir, del_old=False):
+    """
+    For a given individual, make the data embedding, store it in a csv file,
+    and output the inidividual trees to a .tree file. 
+    Stores it in a folder in output dir out_dir, default ./runs/
     :param ind: the GP Individual. Assumed two-objective
     :param toolbox: To evaluate the tree
     :param data: dict-like object containing data_t (feature-major array), outdir (string-like),
     dataset (name, string-like), labels (1-n array of class labels)
     :param suffix: to go after the ".csv/tree"
     :param compress: boolean, compress outputs or not
-    :param csv_file: optional path/buf to output csv to
-    :param tree_file: optional path/buf to output tree to
+    :param out_dir: folder to output to, default "./runs/"
     :param del_old: delete previous generations or not
     """
-    old_files = glob.glob(data.outdir + "*.tree" + ('.gz' if compress else ''))
-    old_files += glob.glob(data.outdir + "*.csv" + ('.gz' if compress else ''))
+    old_files = glob.glob(out_dir + "*.tree" + ('.gz' if compress else ''))
+    old_files += glob.glob(out_dir + "*.csv" + ('.gz' if compress else ''))
     out = evaluateTrees(data.data_t, toolbox, ind)
     columns = ['C' + str(i) for i in range(out.shape[1])]
     df = pd.DataFrame(out, columns=columns)
@@ -205,15 +168,6 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
 
     f_name = ('{}' + ('-{}' * len(ind.fitness.values)) + '{}').format(data.dataset, *ind.fitness.values, suffix)
 
-    if csv_file:
-        df.to_csv(csv_file, index=None)
-    else:
-        outfile = f_name + '.csv'
-        if compress:
-            outfile = outfile + '.gz'
-        p = Path(data.outdir, outfile)
-        df.to_csv(p, index=None, compression=compression)
-
     outfile = f_name + '-aug.csv'
     combined_array = np.concatenate((out, data.data), axis=1)
     aug_columns = columns + ['X' + str(i) for i in range(data.data.shape[1])]
@@ -221,11 +175,10 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
     df_aug["class"] = data.labels
     if compress:
         outfile = outfile + '.gz'
-    p = Path(data.outdir, outfile)
-    df_aug.to_csv(p, index=None, compression=compression)
+    df_aug.to_csv(out_dir + outfile, index=None, compression=compression)
 
-    # this is bad, really need to refractor this block
-    if tree_file:
+    # write all trees in indiviudual to tree file 
+    with open(out_dir+f_name+".tree", "w") as tree_file:
         # Traverse the tree
         nodes, edges, labels = gp.graph(ind[0])
         #print("~"*30)
@@ -245,32 +198,7 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, csv_file=None, tre
             tree_file.write(f"complexity: {comp}")
         tree_file.write(f"\ntotal complexity: {total_complexity}")
         tree_file.write("\n"+"~"*45+"\n")
-    else:
-        outfile = f_name + '.tree'
-        if compress:
-            outfile = outfile + '.gz'
 
-        p = Path(data.outdir, outfile)
-        with gz.open(p, 'wt') if compress else open(p, 'wt') as file:
-            # Traverse the tree
-            nodes, edges, labels = gp.graph(ind[0])
-            #print("~"*30)
-            node_dict = explore_tree_recursive({}, 0, '', ind[0], toolbox, labels)
-            total_complexity = node_dict[0][0]
-            file.write(f"tree: | {str(ind[0])} | ")
-            file.write(f"complexity: {total_complexity}")
-            for i in range(1, len(ind)):
-                file.write('\n')
-                file.write(f"tree: | {str(ind[i])} | ")
-                # Traverse the tree
-                nodes, edges, labels = gp.graph(ind[i])
-                #print("~"*30)
-                node_dict = explore_tree_recursive({}, 0, '', ind[i], toolbox, labels)
-                comp = node_dict[0][0]
-                total_complexity += comp
-                file.write(f"complexity: {comp}")
-            file.write(f"\ntotal complexity: {total_complexity}")
-            file.write("\n"+"~"*45+"\n")
     if del_old:
         for f in old_files:
             try:
