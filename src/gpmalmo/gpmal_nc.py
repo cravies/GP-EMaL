@@ -124,17 +124,11 @@ if __name__ == "__main__":
     rd.all_orderings = rd.ordered_neighbours[:,rd.neighbours]
     print(rd.neighbours)
     assert math.isclose(rd.cxpb + rd.mutpb + rd.mutarpb, 1), "Probabilities of operators should sum to ~1."
-
     print(rd)
-
     pop, stats, hof, logbook = main()
-
     print("#"*30+"\nHALL OF FAME\n"+"#"*30)
     print(hof,len(hof))
-
-    # plot our population run statistics
-    plot_log(logbook)
-
+    # output our augmented datasets as .csvs and individual phenotype as .trees 
     final_output(hof, toolbox, logbook, pop, rd, pset)
     time_val=float(time.perf_counter() - time_st)
     fmtstr1=f"Objective {rd.objective} took {time_val:.2f} seconds "
@@ -143,3 +137,7 @@ if __name__ == "__main__":
     f = open("output.txt", "a")
     f.write(mystr)
     f.close()
+
+    # plot our population run statistics
+    plot_log(logbook)
+    

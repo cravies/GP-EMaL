@@ -1,10 +1,6 @@
 run:
 	echo "Running dataset $(DATASET), $(GENS) gens, $(OBJ) objective."
 	python3 -m gpmalmo.gpmal_nc -d $(DATASET) --dir $(DIR) --gens $(GENS) --obj $(OBJ)
-	rm -rf $(DATASET)_$(GENS)_$(OBJ) || echo "run data not found."
-	mkdir $(DATASET)_$(GENS)_$(OBJ)
-	mv *.png $(DATASET)_$(GENS)_$(OBJ)
-	tar czf $(DATASET)_$(GENS)_$(OBJ).tar.gz $(DATASET)_$(GENS)_$(OBJ)
 reduced:
 	#run with reduced function set, +,*,relu to test new function set specification feature
 	#punish + constant (10) * as product, relu exponentially

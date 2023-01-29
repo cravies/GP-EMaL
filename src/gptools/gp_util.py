@@ -124,6 +124,18 @@ def plot_log(logbook):
     and second objective loss over generations
     :param logbook: The GP run logbook
     """
+    try:
+        with open('run.txt') as f:
+            lines = f.readlines()
+            line = lines[-1]
+            num = line.strip()
+            num=int(num)
+    except FileNotFoundError:
+        # it is the initial run
+        # i.e no textfile
+        num=1
+    #folder to output to
+    fname=f"{rd.outdir}/{rd.dataset}_run_{num}/"
     second_obj = rd.objective
     ##print("Chapters: ",logbook.chapters)
     cost_log = logbook.chapters['cost']
@@ -134,13 +146,13 @@ def plot_log(logbook):
     plt.title("median neighbourhood structure cost")
     plt.xlabel("generation")
     plt.ylabel("cost")
-    plt.savefig(f"{rd.dataset}_{rd.gens}_{rd.objective}_cost.png")
+    plt.savefig(f"{fname}{rd.dataset}_cost_{num}.png")
     plt.close()
     plt.plot(second_obj_median)
     plt.title(second_obj)
     plt.xlabel("generation")
     plt.ylabel(second_obj)
-    plt.savefig(f"{rd.dataset}_{rd.gens}_{rd.objective}_{second_obj}.png")
+    plt.savefig(f"{fname}{rd.dataset}_{rd.objective}_{num}.png")
     plt.close()
 
 def output_ind(ind, toolbox, data, suffix="", compress=False, out_dir=rd.outdir, del_old=False):
