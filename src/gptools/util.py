@@ -145,7 +145,21 @@ def output_pareto_front(loss, second_obj, output_path="results.csv"):
     plt.ylabel(f"{rd.objective}")
     plt.title(f"Accuracy loss and {rd.objective} \n pareto front")
     plt.tight_layout()
-    plt.savefig(f"pareto_front_{rd.objective}.png")
+    # grab run number from textfile
+    try:
+        with open('run.txt') as f:
+            lines = f.readlines()
+            line = lines[-1]
+            print("####LINE: ######",line.strip())
+            num = line.strip()
+            num=int(num)
+    except FileNotFoundError:
+        # it is the initial run
+        # i.e no textfile
+        num=1
+    #file to output to
+    fname=f"/{rd.dataset}_run_{num}/"
+    plt.savefig(f"{rd.outdir}{fname}pareto_{rd.dataset}_{num}.png")
     #write pareto front to results csv file
     dataframe = {"loss":loss, "second_objective":second_obj, "generations":rd.gens, "metric":rd.objective}
     df = pd.DataFrame(data=dataframe)
