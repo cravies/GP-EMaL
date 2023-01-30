@@ -90,7 +90,7 @@ def init_data(rd):
 def final_output(hof, toolbox, logbook, pop, rundata, pset):
     # grab run number from textfile
     try:
-        with open('run.txt') as f:
+        with open(f'{rd.dataset}_run.txt') as f:
             lines = f.readlines()
             line = lines[-1]
             print("####LINE: ######",line.strip())
@@ -101,7 +101,7 @@ def final_output(hof, toolbox, logbook, pop, rundata, pset):
         # i.e no textfile
         num=0
     #now write run# to file
-    f = open("run.txt", "a")
+    f = open(f"{rd.dataset}_run.txt", "a")
     f.write(f"{(num+1)%30}\n")
     f.close()
     #file to output to
@@ -147,7 +147,7 @@ def output_pareto_front(loss, second_obj, output_path="results.csv"):
     plt.tight_layout()
     # grab run number from textfile
     try:
-        with open('run.txt') as f:
+        with open(f'{rd.dataset}_run.txt') as f:
             lines = f.readlines()
             line = lines[-1]
             print("####LINE: ######",line.strip())

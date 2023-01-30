@@ -125,7 +125,7 @@ def plot_log(logbook):
     :param logbook: The GP run logbook
     """
     try:
-        with open('run.txt') as f:
+        with open(f'{rd.dataset}_run.txt') as f:
             lines = f.readlines()
             line = lines[-1]
             num = line.strip()
