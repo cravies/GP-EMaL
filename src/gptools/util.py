@@ -96,16 +96,19 @@ def final_output(hof, toolbox, logbook, pop, rundata, pset):
             print("####LINE: ######",line.strip())
             num = line.strip()
             num=int(num)
+            num=(num%30+1)
     except FileNotFoundError:
         # it is the initial run
         # i.e no textfile
-        num=0
+        num=1
     #now write run# to file
     f = open(f"{rd.dataset}_run.txt", "a")
-    f.write(f"{(num+1)%30}\n")
+    f.write(f"{num}\n")
     f.close()
+    #set global value
+    rd.num = num
     #file to output to
-    fname=f"/{rd.dataset}_run_{num+1}/"
+    fname=f"/{rd.dataset}_run_{num}/"
     #make outdir just in case it doesnt exist
     os.makedirs(rd.outdir+fname, exist_ok=True)
     for i,res in enumerate(hof):
@@ -145,19 +148,7 @@ def output_pareto_front(loss, second_obj, output_path="results.csv"):
     plt.ylabel(f"{rd.objective}")
     plt.title(f"Accuracy loss and {rd.objective} \n pareto front")
     plt.tight_layout()
-    # grab run number from textfile
-    try:
-        with open(f'{rd.dataset}_run.txt') as f:
-            lines = f.readlines()
-            line = lines[-1]
-            print("####LINE: ######",line.strip())
-            num = line.strip()
-            num=int(num)
-    except FileNotFoundError:
-        # it is the initial run
-        # i.e no textfile
-        num=1
-    #file to output to
+    num = rd.num
     fname=f"/{rd.dataset}_run_{num}/"
     plt.savefig(f"{rd.outdir}{fname}pareto_{rd.dataset}_{num}.png")
     #write pareto front to results csv file

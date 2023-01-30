@@ -124,16 +124,7 @@ def plot_log(logbook):
     and second objective loss over generations
     :param logbook: The GP run logbook
     """
-    try:
-        with open(f'{rd.dataset}_run.txt') as f:
-            lines = f.readlines()
-            line = lines[-1]
-            num = line.strip()
-            num=int(num)
-    except FileNotFoundError:
-        # it is the initial run
-        # i.e no textfile
-        num=1
+    num = rd.num
     #folder to output to
     fname=f"{rd.outdir}/{rd.dataset}_run_{num}/"
     second_obj = rd.objective

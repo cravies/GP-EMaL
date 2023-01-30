@@ -1,6 +1,7 @@
 import cachetools
 from defaultlist import defaultlist
 
+num = None
 dataset = None
 data = None
 data_t = None
