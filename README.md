@@ -12,6 +12,10 @@ To run (non exhaustive) tests
 ```
 make test
 ```
+To run in parallel:
+```
+for i in {1..10}; do make run DATASET=wine GENS=1000 OBJ=functional DIR="./datasets/" & done
+```
 
 Note:
 * Datasets used in the paper are in datasets/
