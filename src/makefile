@@ -1,6 +1,11 @@
 run:
 	echo "Running dataset $(DATASET), $(GENS) gens, $(OBJ) objective."
 	python3 -m gpmalmo.gpmal_nc -d $(DATASET) --dir $(DIR) --gens $(GENS) --obj $(OBJ)
+bigrun:
+	for i in {1..30} ; do \
+		python3 -m gpmalmo.gpmal_nc -d $(DATASET) --dir $(DIR) --gens $(GENS) --obj $(OBJ) ; \
+	done
+	echo "done big run."
 reduced:
 	#run with reduced function set, +,*,relu to test new function set specification feature
 	#punish + constant (10) * as product, relu exponentially
