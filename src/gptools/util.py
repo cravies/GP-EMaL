@@ -114,7 +114,7 @@ def final_output(hof, toolbox, logbook, pop, rundata, pset):
     for i,res in enumerate(hof):
         print("iter i: ",i)
         print("fitness values: ",res.fitness.values) 
-        output_ind(res, toolbox, rundata, compress=False, out_dir=rd.outdir+fname)
+        output_ind(res, toolbox, rundata, compress=True, out_dir=rd.outdir+fname)
         #draw_trees(i, res)
     p = Path(rundata.outdir, rundata.logfile + '.gz')
     with gz.open(p, 'wt') as file:
