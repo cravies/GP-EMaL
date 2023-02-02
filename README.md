@@ -51,7 +51,7 @@ The function set operation specification is straightforward, but let us analyse 
    </tr>
 </table>
 
-# ${\color{lightgreen}\text{Explaination TBD}}$
+# ${\color{lightgreen}\text{Explanation TBD}}$
 
 Note:
 * Datasets used in the paper are in datasets/
