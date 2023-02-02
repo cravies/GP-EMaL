@@ -79,7 +79,8 @@ if __name__ == "__main__":
     time_st = time.perf_counter()
     init_data(rundata)
     max_trees = max(2,ceil(.5 * rd.num_features))
-    rd.num_trees = max_trees#min(max_trees,20)
+    # set max output dimensionality to avoid OOM error
+    rd.num_trees = min(max_trees,20)
     print("Max number of constructed features: ",max_trees)
     pset, weights = get_pset_weights(rd.data, rd.num_features, rd)
     rd.pset = pset

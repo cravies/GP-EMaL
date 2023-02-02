@@ -178,7 +178,8 @@ def output_ind(ind, toolbox, data, suffix="", compress=False, out_dir=rd.outdir,
     df_aug["class"] = data.labels
     if compress:
         outfile = outfile + '.gz'
-    df_aug.to_csv(out_dir + outfile, index=None, compression=compression)
+    # write in chunks to avoid OOM error
+    df_aug.to_csv(out_dir + outfile, index=None, chunksize=1000, compression=compression)
 
     # write all trees in indiviudual to tree file 
     with open(out_dir+f_name+".tree", "w") as tree_file:
