@@ -1,5 +1,0 @@
-tree: | f0 | complexity: 2
-tree: | vdiv(vadd(vsub(relu(f0), min(f2, f3)), min(vdiv(f8, f7), vmul(f3, f5))), vdiv(vsub(vsub(f4, f6), relu(f3)), sigmoid(vmul(f1, f8)))) | complexity: 40313
-tree: | f6 | complexity: 2
-total complexity: 40317
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,3 +1,0 @@
-tree: | min(vadd(f285, f200), vsub(f433, f635)) | complexity: 256
-total complexity: 256
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

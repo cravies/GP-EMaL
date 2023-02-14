@@ -1,3 +1,0 @@
-tree: | vadd(vsub(f5, vsub(vadd(vadd(f5, f0), vdiv(f6, f1)), vsub(max(f4, f7), sigmoid(f6)))), vsub(f0, f0)) | complexity: 162
-total complexity: 162
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

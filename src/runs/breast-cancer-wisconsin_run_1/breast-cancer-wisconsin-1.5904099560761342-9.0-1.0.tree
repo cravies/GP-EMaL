@@ -1,3 +1,0 @@
-tree: | vadd(vsub(f0, f8), sigmoid(f3)) | complexity: 9
-total complexity: 9
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

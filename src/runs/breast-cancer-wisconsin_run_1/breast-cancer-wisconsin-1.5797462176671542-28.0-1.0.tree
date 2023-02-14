@@ -1,3 +1,0 @@
-tree: | vadd(vsub(vsub(vmul(f3, f3), vdiv(f3, f0)), f8), vsub(f0, f8)) | complexity: 28
-total complexity: 28
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

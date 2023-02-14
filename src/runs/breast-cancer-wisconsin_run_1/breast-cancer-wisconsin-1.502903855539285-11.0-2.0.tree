@@ -1,4 +1,0 @@
-tree: | vadd(vsub(f6, f8), f0) | complexity: 7
-tree: | vsub(f2, f0) | complexity: 4
-total complexity: 11
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

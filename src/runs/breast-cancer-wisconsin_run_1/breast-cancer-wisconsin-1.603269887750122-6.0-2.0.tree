@@ -1,4 +1,0 @@
-tree: | vadd(f0, f1) | complexity: 4
-tree: | f4 | complexity: 2
-total complexity: 6
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

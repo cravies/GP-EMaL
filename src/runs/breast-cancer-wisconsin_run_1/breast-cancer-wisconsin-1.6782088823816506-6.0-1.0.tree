@@ -1,3 +1,0 @@
-tree: | vadd(f1, sigmoid(f3)) | complexity: 6
-total complexity: 6
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
