@@ -6,8 +6,8 @@ from gptools.moead import MOEAD
 
 class GPMALNCMOEAD(MOEAD):
     DECOMPOSITION = 'tchebycheff'
-    obj_mins = [0, 0, 1]
-    obj_maxes = [1, int(1e6), rundata.num_trees]
+    obj_mins = [0, 1]
+    obj_maxes = [1, int(1e6)]
 
     def __init__(self, data_t, *args, **kwargs):
         super().__init__(*args, **kwargs)

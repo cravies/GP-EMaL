@@ -58,9 +58,7 @@ def evalGPMalTime(data_t, toolbox, individual):
 def evalGPMalFunctional(data_t, toolbox, individual):
     """
     Measures error with neigbourhood structure metric, 
-    and expression functional complexity,
-    and dimensionality
-    3 - objective optimisation
+    and expression functional complexity
     """
     fcomp, dat_array = evaluateTreesFunctional(data_t, toolbox, individual)
     hashable = ArrayWrapper(dat_array)
@@ -73,10 +71,10 @@ def evalGPMalFunctional(data_t, toolbox, individual):
     if ratio_uniques < 0.9:
         # lower ratio is worse, so higher return value
         # 2- so that always worse than a valid soln
-        return 2 - ratio_uniques, fcomp, len(individual)
+        return 2 - ratio_uniques, fcomp
 
     # reshape to be in [0,2] and then [0,1]
-    to_return = (-cost + 1) / 2, fcomp, len(individual)
+    to_return = (-cost + 1) / 2, fcomp
     if to_return[0] == 0:
         print("wow")
     return to_return

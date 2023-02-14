@@ -5,7 +5,7 @@ import os
 import random
 from pathlib import Path
 from deap import gp
-#import pygraphviz as pgv
+import pygraphviz as pgv
 from gpmalmo import rundata as rd
 import time
 import timeit
@@ -85,6 +85,26 @@ def add_to_string_cache(ind):
     dat_set.add(hash)
     ind.str = hash
 
+def draw_trees(vnum, ind):
+    obj = rd.objective
+    print("Objective: ",obj)    
+    num = rd.num
+    #folder to output to
+    fname=f"{rd.outdir}/{rd.dataset}_run_{num}/"
+    os.mkdir(f'./{fname}individual_{vnum}/')
+    for fnum,tree in enumerate(ind):
+        print("vnum: ", vnum)
+        nodes, edges, labels = gp.graph(tree)
+        g = pgv.AGraph()
+        g.add_nodes_from(nodes)
+        g.add_edges_from(edges)
+        g.layout(prog="dot")
+        for i in nodes:
+            n = g.get_node(i)
+            n.attr["label"] = labels[i]
+        #feature fnum, version vnum, second objective obj
+        #higher vnum will be better at obj2, worse at obj1 and vice versa
+        g.draw(f"{fname}individual_{vnum}/tree_{fnum}.png")
 
 def check_uniqueness(ind1, ind2, num_to_produce, offspring):
     # deals with the case where we needed to create two individuals, but had 4 from TS, and the first two were okay,
