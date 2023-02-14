@@ -1,0 +1,6 @@
+tree: | min(vsub(f245, vadd(f285, f200)), f152) | complexity: 512
+tree: | f119 | complexity: 2
+tree: | f233 | complexity: 2
+tree: | f326 | complexity: 2
+total complexity: 518
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

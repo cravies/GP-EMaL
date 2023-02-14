@@ -12,7 +12,7 @@ ordered_neighbours = None
 neighbours = None
 all_orderings = None
 identity_ordering = None
-nobj = 2
+nobj = 3#2 #we are doing dimensionality, neighbourhood structure, complexity
 fitnessCache = defaultlist(lambda: cachetools.LRUCache(maxsize=1e6))
 accesses = 0
 stores = 0

@@ -1,0 +1,3 @@
+tree: | vsub(f7, vdiv(f2, f6)) | complexity: 7
+total complexity: 7
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

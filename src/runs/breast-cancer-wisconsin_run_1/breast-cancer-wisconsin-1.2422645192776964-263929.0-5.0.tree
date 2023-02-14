@@ -1,0 +1,7 @@
+tree: | f6 | complexity: 2
+tree: | vdiv(vadd(vsub(relu(f0), min(f2, f3)), min(vdiv(f8, f7), vmul(f3, f5))), vdiv(vsub(vadd(sigmoid(vadd(f8, f6)), vadd(relu(f8), vsub(f2, f4))), f6), sigmoid(vmul(f1, f8)))) | complexity: 195435
+tree: | max(f5, f2) | complexity: 16
+tree: | vsub(vadd(vadd(vadd(f1, vmul(f6, relu(f4))), vadd(f7, f0)), vadd(vadd(vsub(f1, f0), f3), vmul(vmul(relu(f6), min(f3, f3)), vadd(relu(f3), vadd(f5, f4))))), vsub(max(relu(f6), vsub(vsub(f4, f8), f8)), sigmoid(min(f1, f2)))) | complexity: 68472
+tree: | vadd(f6, f3) | complexity: 4
+total complexity: 263929
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

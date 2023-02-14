@@ -1,0 +1,3 @@
+tree: | vadd(vsub(f6, f8), vsub(f0, vdiv(f3, f5))) | complexity: 12
+total complexity: 12
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

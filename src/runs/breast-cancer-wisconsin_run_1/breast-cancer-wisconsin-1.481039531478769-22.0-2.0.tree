@@ -1,0 +1,4 @@
+tree: | sigmoid(f3) | complexity: 4
+tree: | vadd(relu(sigmoid(f0)), f2) | complexity: 18
+total complexity: 22
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

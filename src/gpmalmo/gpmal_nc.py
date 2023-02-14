@@ -30,7 +30,12 @@ def main():
         mstats = tools.MultiStatistics(cost=stats_cost, tik=stats_tik_norm)
     elif rd.objective=="functional":
         stats_functional = tools.Statistics(lambda ind: ind.fitness.values[1])
-        mstats = tools.MultiStatistics(cost=stats_cost, functional=stats_functional)
+        # add a third objective -> embedding dimensionality
+        stats_num_trees = tools.Statistics(lambda ind: ind.fitness.values[2])
+        mstats = tools.MultiStatistics(
+            cost=stats_cost, functional=stats_functional, 
+            embedding_dims=stats_num_trees
+        )
     mstats.register("min", np.min, axis=0)
     mstats.register("median", np.median, axis=0)
     mstats.register("max", np.max, axis=0)
@@ -138,7 +143,3 @@ if __name__ == "__main__":
     f = open("output.txt", "a")
     f.write(mystr)
     f.close()
-
-    # plot our population run statistics
-    plot_log(logbook)
-    

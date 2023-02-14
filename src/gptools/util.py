@@ -3,6 +3,7 @@ import argparse
 import gzip as gz
 from pathlib import Path
 from deap import gp
+from mpl_toolkits.mplot3d import Axes3D  
 from matplotlib import pyplot as plt
 from gpmalmo import rundata as rd
 from gptools.gp_util import output_ind, explore_tree_recursive
@@ -122,19 +123,17 @@ def final_output(hof, toolbox, logbook, pop, rundata, pset):
     pop_stats = [str(p.fitness) for p in pop]
     pop_stats.sort()
     hof_stats = [str(h.fitness) for h in hof]
-    #loss arr for pareto front
-    loss = [h.fitness.values[0] for h in hof]
-    #second objective arr for pareto front
-    second_obj = [h.fitness.values[1] for h in hof]
-    output_pareto_front(loss, second_obj)
-    # hof_stats.sort()
+    fitness_values = [h.fitness.values for h in hof]
+    # filter infs
+    fitness_values = [f for f in fitness_values if float('inf') not in f]
+    output_pareto_front(fitness_values)
     print("POP:")
     print("\n".join(pop_stats))
     print("PF:")
     print("\n".join(hof_stats))
 
 
-def output_pareto_front(loss, second_obj, output_path="results.csv"):
+def output_pareto_front(fitness, output_path="results.csv"):
     """
     Plot the pareto front tradeoff between 
     Neighbourhood structure loss
@@ -143,14 +142,33 @@ def output_pareto_front(loss, second_obj, output_path="results.csv"):
     "second_obj"
     Also write to results database file
     """
-    plt.plot(loss, second_obj)
-    plt.xlabel("Accuracy proxy loss")
-    plt.ylabel(f"{rd.objective}")
-    plt.title(f"Accuracy loss and {rd.objective} \n pareto front")
-    plt.tight_layout()
-    num = rd.num
-    fname=f"/{rd.dataset}_run_{num}/"
-    plt.savefig(f"{rd.outdir}{fname}pareto_{rd.dataset}_{num}.png")
+    if (rd.nobj==2):
+        loss = [f[0] for f in fitness]
+        second_obj = [f[1] for f in fitness]
+        plt.plot(loss, second_obj)
+        plt.xlabel("Accuracy proxy loss")
+        plt.ylabel(f"{rd.objective}")
+        plt.title(f"Accuracy loss and {rd.objective} \n pareto front")
+        plt.tight_layout()
+        num = rd.num
+        fname=f"/{rd.dataset}_run_{num}/"
+        plt.savefig(f"{rd.outdir}{fname}pareto_{rd.dataset}_{num}.png")
+    else:
+        # 3d pareto surface
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        loss = [f[0] for f in fitness] # neighbourhood structure loss
+        second_obj = [f[1] for f in fitness] # tree complexity metric
+        third_obj = [f[2] for f in fitness] # embedding dimensionality
+        print("results:")
+        print(loss,second_obj,third_obj)
+        ax.scatter(loss, second_obj, third_obj, linewidth=0.1)
+        ax.set_xlabel('$N$')
+        ax.set_ylabel('$TC$')
+        ax.set_zlabel('$ED$')
+        num = rd.num
+        fname=f"/{rd.dataset}_run_{num}/"
+        fig.savefig(f"{rd.outdir}{fname}pareto_{rd.dataset}_{num}_3d.png")
     #write pareto front to results csv file
     dataframe = {"loss":loss, "second_objective":second_obj, "generations":rd.gens, "metric":rd.objective}
     df = pd.DataFrame(data=dataframe)
