@@ -62,7 +62,7 @@ def init_data(rd):
     parser.add_argument("--neighbours-mean", dest="use_neighbours_mean", action="store_true")
     parser.add_argument("--trees", dest="max_trees", type=int)
     parser.add_argument("-ob", "--obj", help="objective (time, size, functional)", type=str, default="functional")
-    parser.add_argument("-nobj", help="number of objectives. If 3, minimise n_structure, functional complexity, and embedding dims", type=int, default=3)
+    parser.add_argument("-nobj", "--numobj", help="number of objectives", type=int, default=3)
     parser.add_argument("-fs", "--funcset", help="function set", 
         type=str, default="vadd,vsub,vmul,vdiv,max,min,relu,sigmoid,abs")
     parser.add_argument("-oc", "--opcosts", help="node operation costs",
@@ -77,7 +77,7 @@ def init_data(rd):
     all_data = read_data("{}{}.data".format(args.dir, args.dataset))
     data = all_data["data"]
     rd.dataset = args.dataset
-    rd.nobj = args.nobj
+    rd.nobj = args.numobj
     print("number of objectives: ",rd.nobj)
     rd.num_instances = data.shape[0]
     rd.num_features = data.shape[1]

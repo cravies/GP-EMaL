@@ -85,6 +85,7 @@ def make_ind(toolbox, creator, max_trees, fixed=False):
         return creator.Individual([toolbox.tree() for _ in range(random.randint(1, max_trees))])
 
 if __name__ == "__main__":
+    print("number of objectives: ",rd.nobj)
     #time tree evaluation
     time_st = time.perf_counter()
     init_data(rundata)
