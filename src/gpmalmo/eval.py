@@ -67,16 +67,27 @@ def evalGPMalFunctional(data_t, toolbox, individual):
     # At the moment, if we don't do something like this, it likes to find a dumb optima where all distances are ~~0
     args = (rundata.all_orderings, rundata.identity_ordering, dat_array)
     cost, ratio_uniques = cachedError(hashable, eval_similarity_st, rundata, args=args, kargs={}, index=0)
+    # embedding dimensionality
+    dims = len(individual)
+
+    # below section explained:
+    # algorithm right now has two options, either 2 obj (n-structure, complexity)
+    # or three objective (n-structure, complexity, embedding dimensionality)
 
     if ratio_uniques < 0.9:
         # lower ratio is worse, so higher return value
         # 2- so that always worse than a valid soln
-        return 2 - ratio_uniques, fcomp
-
+        if rundata.nobj==2:
+            return 2 - ratio_uniques, fcomp
+        elif rundata.nobj==3:
+            return 2 - ratio_uniques, fcomp, dims
+        else:
+            raise ValueError(f'rundata nobj is {rundata.nobj} should be 2 or 3') 
     # reshape to be in [0,2] and then [0,1]
-    to_return = (-cost + 1) / 2, fcomp
-    if to_return[0] == 0:
-        print("wow")
+    if rundata.nobj==2:
+        return (-cost + 1) / 2, fcomp
+    elif rundata.nobj==3:
+        return (-cost + 1) / 2, fcomp, dims
     return to_return
 
 def evalGPMalTR(data_t, toolbox, individual):

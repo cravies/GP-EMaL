@@ -1,20 +1,24 @@
 import numpy as np
 
-from gpmalmo import rundata
+from gpmalmo import rundata as rd
 from gptools.moead import MOEAD
 
 
 class GPMALNCMOEAD(MOEAD):
     DECOMPOSITION = 'tchebycheff'
-    obj_mins = [0, 1]
-    obj_maxes = [1, int(1e6)]
+    if rd.nobj==2:
+        obj_mins = [0, 1]
+        obj_maxes = [1, int(1e6)]
+    elif rd.nobj==3:
+        obj_mins = [0, 0, 1]
+        obj_maxes = [1, int(1e6), rd.num_trees]
+    else:
+        raise ValueError('nobj should be 2 or 3')
 
     def __init__(self, data_t, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.data_t = data_t
         self.functionType_ = "gpMalNC"
-
-
 
     def updateProblem(self, individual, id_, type_):
         """
