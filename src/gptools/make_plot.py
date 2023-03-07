@@ -8,7 +8,7 @@ from typing import NoReturn
 #needs to be adjusted. For COIL20 we have nf=4
 NUM_FEATURES=4
 
-#------- Array type inheritance ----------------
+#------- Array inheritance ----------------
 
 class ProxyArray(_numpy_array):
     pass
@@ -34,7 +34,6 @@ def np_protectedDiv(left, right):
 def np_sigmoid(gamma):
     return expit(gamma)
 
-
 def np_many_add(a, b, c, d, e):
     return a + b + c + d + e
 
@@ -45,7 +44,9 @@ def sigmoid(gamma):
     else:
         return 1 / (1 + math.exp(-gamma))
 
-def main(tree: str, fs: str=NoReturn) -> NoReturn:
+#--------- main loop -------------
+    
+def main(tree: str, fs: str) -> NoReturn:
     """Plot a given GP tree from an individual.
     Keyword arguments:
     tree -- the tree (a str) read from the .tree output file
