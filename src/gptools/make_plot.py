@@ -5,9 +5,11 @@ import itertools
 from deap.creator import _numpy_array
 from typing import NoReturn
 import os
+from os import path
 
 #needs to be adjusted. For COIL20 we have nf=4
 NUM_FEATURES=4
+FS = "vadd,vsub,vmul,vdiv,max,min,relu,sigmoid"
 
 #------- Array type inheritance ----------------
 
@@ -55,15 +57,25 @@ def load_trees(path: str) -> NoReturn:
     files = os.listdir(path)
     for file in files:
         if file.endswith('.tree'):
-            f = open(f"{path}/{file}")
-            print("~"*30 + file + "~"*30)
-            lines = f.readlines()
-            for line in lines:
-                if ' | ' in line:
-                    line = line.split(' | ')
-                    tree = line[1]
-                    print(tree)
+            plot_tree(f"{path}/{file}")
 
+def plot_tree(path: str) -> NoReturn:
+    """Plots a specific tree file
+    Arguments:
+    path: relative path 
+    """
+    count=0
+    f = open(path)
+    print("~"*30 + path + "~"*30)
+    lines = f.readlines()
+    for line in lines:
+        if ' | ' in line:
+            line = line.split(' | ')
+            tree = line[1]
+            print(tree)
+            main(f"{count}_out",tree,FS)
+            count += 1
+    
 def main(name: str, tree: str, fs: str) -> NoReturn:
     """Plot a given GP tree from an individual.
     Arguments:
@@ -95,7 +107,7 @@ def main(name: str, tree: str, fs: str) -> NoReturn:
         pset.addPrimitive(np.minimum, [RealArray, RealArray], RealArray, name="min")
 
     #add possible features
-    for i in range(1000):
+    for i in range(2000):
         pset.addTerminal(f"f{i}", RealArray)
 
     # convert string to gp PrimitiveTree using from_string @classmethod
@@ -110,7 +122,11 @@ def main(name: str, tree: str, fs: str) -> NoReturn:
     for i in nodes:
         n = g.get_node(i)
         n.attr["label"] = labels[i]
-    g.draw(f"{name}.png")
+    if path.exists(f"{name}.png")==False:
+        g.draw(f"{name}.png")
+    else: 
+        print(name+" exists.")
 
 if __name__=="__main__":
-    load_trees('./COIL20_pt2/COIL20_run_1')
+    #load_trees('./COIL20_pt2/COIL20_run_1')
+    plot_tree('./COIL20_pt2/COIL20_run_1/COIL20-0.02724386830240788-635.75.tree')
