@@ -1,4 +1,4 @@
-# ${\color{lightgreen}\text{GP-EMaL}}$
+GP-EMaL
 ### Genetic Programming for Explainable Manifold Learning
 This is our method for producing interpretable trees for nonlinear dimensionality reduction (GP for NLDR). To do this, we extend an existing multi-objective method, <a href="https://github.com/AndLen/gpmalmo">GPMaLMO.</a> GPMaLMO optimises NLDR embeddings while minimising embedding dimensionality. We changed the objective function to minimise tree complexity instead of dimensionality. To measure tree complexity, we performed a literature survey for existing GP tree complexity metrics and implemented and compared a few of the most promising ones. <a href="https://link.springer.com/chapter/10.1007/978-3-319-34223-8_1">A method</a> that minimised the semantic complexity of the tree worked the best. We took this metric and extended it to be flexible, allowing the user to specify how the semantic complexity is defined depending on what is interpretable in the context of their dataset, knowledge and methodology. We also modify the tree complexity metric to explicitly optimise for small and symmetrical trees. The result is a flexible, efficient method which suits the subjective nature of interpretability. The new method is applied on all the same datasets as the original algorithm GPMaLMO, and the constructed datasets give similar classification accuracy with much more interpretable trees and minimal added compute cost.
 
@@ -50,8 +50,6 @@ The function set operation specification is straightforward, but let us analyse 
       <td>$\mathcal{O}(2^{n})$</td>
    </tr>
 </table>
-
-# ${\color{lightgreen}\text{Explanation TBD}}$
 
 Note:
 * Datasets used in the paper are in datasets/
