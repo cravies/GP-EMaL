@@ -4,11 +4,12 @@ import pygraphviz as pgv
 import itertools
 from deap.creator import _numpy_array
 from typing import NoReturn
+import os
 
 #needs to be adjusted. For COIL20 we have nf=4
 NUM_FEATURES=4
 
-#------- Array inheritance ----------------
+#------- Array type inheritance ----------------
 
 class ProxyArray(_numpy_array):
     pass
@@ -34,6 +35,7 @@ def np_protectedDiv(left, right):
 def np_sigmoid(gamma):
     return expit(gamma)
 
+
 def np_many_add(a, b, c, d, e):
     return a + b + c + d + e
 
@@ -44,11 +46,28 @@ def sigmoid(gamma):
     else:
         return 1 / (1 + math.exp(-gamma))
 
-#--------- main loop -------------
-    
-def main(tree: str, fs: str) -> NoReturn:
+def load_trees(path: str) -> NoReturn:
+    """ Load a set of tree files from a directory
+    and plot all of them
+    Arguments:
+    path: relative path (from this file) to the folder to walk
+    """
+    files = os.listdir(path)
+    for file in files:
+        if file.endswith('.tree'):
+            f = open(f"{path}/{file}")
+            print("~"*30 + file + "~"*30)
+            lines = f.readlines()
+            for line in lines:
+                if ' | ' in line:
+                    line = line.split(' | ')
+                    tree = line[1]
+                    print(tree)
+
+def main(name: str, tree: str, fs: str) -> NoReturn:
     """Plot a given GP tree from an individual.
-    Keyword arguments:
+    Arguments:
+    name - name for the .png tree plot we are making
     tree -- the tree (a str) read from the .tree output file
     fs - the functional set for the GP algorithm (a str)
     returns: None
@@ -91,9 +110,7 @@ def main(tree: str, fs: str) -> NoReturn:
     for i in nodes:
         n = g.get_node(i)
         n.attr["label"] = labels[i]
-    g.draw(f"test.png")
+    g.draw(f"{name}.png")
 
 if __name__=="__main__":
-    tree="vadd(f315, vadd(sigmoid(f700), vadd(vadd(vadd(sigmoid(sigmoid(f495)), sigmoid(f442)), vadd(sigmoid(f156), sigmoid(vadd(f340, sigmoid(f442))))), sigmoid(vadd(sigmoid(f442), f536)))))"
-    fs = "vadd,vsub,vmul,vdiv,max,min,relu,sigmoid"
-    main(tree,fs)
+    load_trees('./COIL20_pt2/COIL20_run_1')
