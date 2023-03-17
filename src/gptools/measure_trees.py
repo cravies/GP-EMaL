@@ -6,19 +6,21 @@ from deap.creator import _numpy_array
 from typing import NoReturn
 import os
 from os import path
+import re
 
 FS = "vadd,vsub,vmul,vdiv,max,min,relu,sigmoid,np_if"
 COSTS = "sum,sum,prod,prod,exp,exp,exp,exp,exp,exp"
 COST_DICT = {k:v for k, v in zip(FS.split(','),COSTS.split(','))}
 
 def tree_stats_iterative(tree):
-    stats_dict = {'exp':0, 'prod':0, 'sum':0, 'const':0, 'nodes':0}
+    stats_dict = {'exp':0, 'prod':0, 'sum':0, 'const':0, 'nodes':0, 'unique_feats':0}
     tree=str(tree)
     for key in COST_DICT:
        stats_dict[COST_DICT[key]] += tree.count(key)
     # count number of constants
     stats_dict['const'] = str(tree).count("f") - str(tree).count("if")
     stats_dict['nodes'] = stats_dict['exp'] + stats_dict['prod'] + stats_dict['sum'] + stats_dict['const']
+    stats_dict['unique_feats'] += count_unique_features(tree)
     return stats_dict
 
 def load_trees(path: str, oldnew='new') -> NoReturn:
@@ -67,6 +69,15 @@ def measure_tree_old(path: str) -> NoReturn:
         tree = line.replace('\n','')
         file_line, stats_dict = main(tree,FS)
         print(file_line)
+
+def count_unique_features(tree: str) -> int:
+    """
+    counts the number of unique features in a tree str
+    """
+    tree_arr = tree.replace(')',' ').replace('(',' ').replace(',',' ').split()
+    tree_arr = [i for i in tree_arr if 'i' not in i and 'f' in i]
+    uniq_len = len(list(set(tree_arr)))
+    return uniq_len
 
 def main(tree: str, fs: str) -> NoReturn:
     """
