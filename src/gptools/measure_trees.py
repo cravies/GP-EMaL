@@ -20,8 +20,10 @@ def tree_stats_iterative(tree):
     # count number of constants
     stats_dict['const'] = str(tree).count("f") - str(tree).count("if")
     stats_dict['nodes'] = stats_dict['exp'] + stats_dict['prod'] + stats_dict['sum'] + stats_dict['const']
-    stats_dict['unique_feats'] += count_unique_features(tree)
-    return stats_dict
+    uniq = count_unique_features(tree)
+    uniq_len = len(list(set(uniq)))
+    stats_dict['unique_feats']=uniq_len
+    return uniq, stats_dict
 
 def load_trees(path: str, oldnew='new') -> NoReturn:
     """ Load a set of .tree files from a directory
@@ -48,12 +50,24 @@ def measure_tree_new(path: str) -> NoReturn:
     f = open(path)
     print("~"*30 + path + "~"*30)
     lines = f.readlines()
+    unique_feats=[]
+    stats_dict = {'exp':0, 'prod':0, 'sum':0, 'const':0, 'nodes':0, 'unique_feats':0}
     for line in lines:
         if ' | ' in line:
             line = line.split(' | ')
             tree = line[1]
-            file_line, stats_dict = main(tree,FS)
+            uniq, file_line, stats_dict_tmp = main(tree,FS)
+            unique_feats.append(uniq)
+            # add to total
+            for key in stats_dict.keys():
+                stats_dict[key] += stats_dict_tmp[key]
             print(file_line)
+    flat_list = [item for sublist in unique_feats for item in sublist]
+    print("unique features: ", set(flat_list))
+    stats_dict['unique_feats']=len(list(set(flat_list)))
+    print("~"*30)
+    print("Individual total stats: ",str(stats_dict))
+    print("~"*30)
 
 def measure_tree_old(path: str) -> NoReturn:
     """
@@ -65,21 +79,31 @@ def measure_tree_old(path: str) -> NoReturn:
     f = open(path)
     print("~"*30 + path + "~"*30)
     lines = f.readlines()
+    stats_dict = {'exp':0, 'prod':0, 'sum':0, 'const':0, 'nodes':0, 'unique_feats':0}
+    unique_feats=[]
     for line in lines:
         tree = line.replace('\n','')
-        file_line, stats_dict = main(tree,FS)
+        uniq, file_line, stats_dict_tmp = main(tree,FS)
+        unique_feats.append(uniq)
+        for key in stats_dict.keys():
+            stats_dict[key] += stats_dict_tmp[key]
         print(file_line)
+    flat_list = [item for sublist in unique_feats for item in sublist]
+    print("unique features: ", set(flat_list))
+    stats_dict['unique_feats']=len(list(set(flat_list)))
+    print("~"*30)
+    print("Individual total stats: ",str(stats_dict))
+    print("~"*30)
 
-def count_unique_features(tree: str) -> int:
+def count_unique_features(tree: str):
     """
     counts the number of unique features in a tree str
     """
     tree_arr = tree.replace(')',' ').replace('(',' ').replace(',',' ').split()
     tree_arr = [i for i in tree_arr if 'i' not in i and 'f' in i]
-    uniq_len = len(list(set(tree_arr)))
-    return uniq_len
+    return tree_arr
 
-def main(tree: str, fs: str) -> NoReturn:
+def main(tree: str, fs: str):
     """
     Calculate the complexity of a given GP tree individual.
     Arguments:
@@ -89,12 +113,15 @@ def main(tree: str, fs: str) -> NoReturn:
     """ 
     # convert string to gp PrimitiveTree using from_string @classmethod
     # need to do this so we can calculate complexity 
-    stats_dict = tree_stats_iterative(tree)
+    uniq, stats_dict = tree_stats_iterative(tree)
     treestr = str(tree).replace("'","")
     mystr="~"*30 + "\n" + "tree: " + "\n" + "~"*30 + "\n" + treestr + "\n" 
     mystr+="~"*30 + "\n" + "stats: \n" + str(stats_dict) + "\n" + "~"*30 + "\n"
-    return mystr, stats_dict
+    return uniq, mystr, stats_dict
 
 if __name__=="__main__":
+    # EXAMPLES:
+    # run on a specific tree file
     measure_tree_old('winegpmalmo/1/wine-0.02216947891790294-7.0.tree')
-    load_trees('./COIL20_pt2/COIL20_run_1')
+    # run on every tree file in a directory
+    #load_trees('./COIL20_pt2/COIL20_run_1')
