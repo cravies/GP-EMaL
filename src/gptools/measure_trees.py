@@ -8,6 +8,7 @@ import os
 from os import path
 import re
 import csv
+import argparse
 
 FS = "vadd,vsub,vmul,vdiv,max,min,relu,sigmoid,np_if"
 COSTS = "sum,sum,prod,prod,exp,exp,exp,exp,exp,exp"
@@ -76,7 +77,7 @@ def measure_tree_new(path):
     print("~"*30)
     # add path to stats dict
     stats_dict['filename']=path
-    stats_dict['algo']="OLD"
+    stats_dict['algo']="NEW"
     # write results to csv file
     json_write(stats_dict)
 
@@ -107,7 +108,7 @@ def measure_tree_old(path):
     print("~"*30)
     # add path to stats dict
     stats_dict['filename']=path
-    stats_dict['algo']="NEW"
+    stats_dict['algo']="OLD"
     # write results to csv file
     json_write(stats_dict)
 
@@ -160,11 +161,11 @@ def json_write(data_dict, filename='tree_stats.csv'):
             writer.writerow(data_dict.values())
 
 if __name__=="__main__":
-    # EXAMPLES:
-    # run on a specific tree file
-    #measure_tree_old('winegpmalmo/1/wine-0.02216947891790294-7.0.tree')
-    # run on every tree file in a directory
-    run_folder('COIL20_pt2/')
-    #run_folder('winegpmalmo','old')
-    # recurse on COIL20_pt2 folder
-    #run_folder('./COIL20_pt2/')
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-algo", "--algorithm", help="algorithm, old or new", type=str, default="new")
+    parser.add_argument("-dir", "--directory", help="directory to find tree files in. recurses.", type=str, default="./")
+    args = parser.parse_args()
+    if args.algorithm in ['old','new']:
+        run_folder(args.directory,args.algorithm) 
+    else:
+        raise ValueError("-algo should be 'old' or 'new'")
