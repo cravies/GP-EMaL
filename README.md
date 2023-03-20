@@ -7,7 +7,7 @@ This is our method for producing interpretable trees for nonlinear dimensionalit
 To run on iris.data (in /src/datasets dir) for 10 generations, using our functional metric
 as our seconday objective to minimise (alongside neighbourhood structure embedding loss)
 ```bash
-make run DATASET=iris GENS=3 OBJ=functional DIR="./datasets/"
+make run DATASET=iris GENS=10 DIM=2
 ```
 To clean up output files in the directory:
 ```bash
