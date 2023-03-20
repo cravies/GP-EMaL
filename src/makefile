@@ -1,6 +1,6 @@
 run:
-	echo "Running dataset $(DATASET), $(GENS) gens, $(OBJ) objective."
-	python3 -m gpmalmo.gpmal_nc -d $(DATASET) --dir $(DIR) --gens $(GENS) --obj $(OBJ)
+	echo "Running dataset $(DATASET), $(GENS) gens $(DIM) objectives"
+	python3 -m gpmalmo.gpmal_nc -d $(DATASET) --dir $(DIR) --gens $(GENS) -nobj $(DIM)
 bigrun:
 	for i in {1..30} ; do \
 		python3 -m gpmalmo.gpmal_nc -d $(DATASET) --dir $(DIR) --gens $(GENS) --obj $(OBJ) ; \
@@ -23,3 +23,6 @@ clean:
 	done
 test:
 	python3 -m unittest gptools.test_gp_util
+search:
+	mypy get_median_tree.py 
+	python get_median_tree.py
